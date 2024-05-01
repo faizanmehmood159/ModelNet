@@ -31,7 +31,7 @@ const Profile = ({ navigation }) => {
 
   const uploadProfilePicture = async () => {
     try {
-      const response = await fetch('http://192.168.1.2:8000/images/upload-profile-image', {
+      const response = await fetch('http://192.168.1.2:3000/images/upload-profile-image', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -34,7 +34,6 @@ const Navigation = () => {
   return (
     <NavigationContainer>
       <Stack.Navigator >
-        <Stack.Screen name="AIChatbot" component={AIChatbot} options={{headerTransparent: true}} />
         <Stack.Screen name="GetStart" component={GetStart} options={{ headerShown: false }} />
         <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
@@ -47,6 +46,7 @@ const Navigation = () => {
         <Stack.Screen name="ChangeName" component={ChangeName} options={{headerTransparent: true}} />
         <Stack.Screen name="FAQ" component={FAQ} options={{headerTransparent: true}} />
         <Stack.Screen name="SpeedTest" component={SpeedTest}  />
+        <Stack.Screen name="AIChatbot" component={AIChatbot} options={{headerTransparent: true}} />
         <Stack.Screen name="NewInstallation" component={NewInstallation} options={{headerTransparent: true}} />
         <Stack.Screen name="RegisterComponent" component={RegisterComponent}  options={{headerTransparent: true}} />
         <Stack.Screen name="CustomerSupport" component={CustomerSupport}  options={{headerTransparent: true}} />

@@ -11,7 +11,7 @@ const ResetPassword = ({ navigation }) => {
 
   const resetPassword = async () => {
     try {
-      const response = await fetch('Yhttp://192.168.100.2:8000/api/v1/auth/resetPassword', {
+      const response = await fetch('Yhttp://192.168.100.2:3000/api/v1/auth/resetPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

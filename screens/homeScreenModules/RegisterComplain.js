@@ -23,7 +23,7 @@ const RegisterComponent = () => {
     }
 
     // Send complaint data to the backend
-    fetch('http://192.168.1.2:8000/api/v1/complaint', {
+    fetch('http://192.168.1.2:3000/api/v1/complaint', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

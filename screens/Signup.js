@@ -118,7 +118,7 @@ const Signup = ({ navigation }) => {
   
     try {
       showLoader();
-      const response = await axios.post("http://192.168.1.2:8000/api/v1/auth/signup", userData);
+      const response = await axios.post("http://192.168.1.2:3000/api/v1/auth/signup", userData);
       const data = response.data;
       
       console.log("Response from backend:", data);
