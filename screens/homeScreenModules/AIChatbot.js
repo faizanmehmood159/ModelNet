@@ -1,98 +1,191 @@
 import React, { useState } from "react";
 import {
-  StyleSheet,
-  Text,
   View,
-  Image,
-  TouchableOpacity,
+  Text,
   TextInput,
-  FlatList,
+  TouchableOpacity,
+  ScrollView,
+  ActivityIndicator,
+  Image,
+  StyleSheet,
 } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import { SafeAreaView } from "react-native-safe-area-context";
 import axios from "axios";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { FontAwesome } from "@expo/vector-icons";
+import { speak, stop, isSpeakingAsync } from "expo-speech";
+import Color from "../../constants/Colors";
+import { FontAwesome5 } from "@expo/vector-icons";
+import { LinearGradient } from "expo-linear-gradient";
 
 const AIChatbot = () => {
-  const [data, setData] = useState([]);
-  const [textInput, setTextInput] = useState("");
-  const apiKey = "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";
-  const apiUrl = "https://api.openai.com/v1/engines/text-davinci-003/completions";
+  const [chat, setChat] = useState([]);
+  const [userInput, setUserInput] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const API_KEY = "AIzaSyDZho2QET6QahxMVeyl57hFbV53WELTs8c";
 
-  const handleSend = async () => {
+  const handleUserInput = async () => {
+    // Add user input to chat
+    let updatedChat = [
+      ...chat,
+      { role: "user", parts: [{ text: userInput + " this query is about internet." }] },
+      
+    ];
+    setLoading(true);
+  
     try {
-      const prompt = textInput;
       const response = await axios.post(
-        apiUrl,
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`,
         {
-          prompt: prompt,
-          max_tokens: 1024,
-          temperature: 0.5,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${apiKey}`,
-          },
+          contents: updatedChat,
         }
       );
   
-      console.log("API Response Status:", response.status);
-      console.log("API Response Data:", response.data);
+      const modelResponse =
+        response.data?.candidates[0]?.content?.parts?.[0]?.text || "";
+      if (modelResponse) {
+        const updateChatWithModel = [
+          ...updatedChat,
+          { role: "model", parts: [{ text: modelResponse }] },
+        ];
+        setChat(updateChatWithModel);
+        await handleSpeech(modelResponse);
+      }
   
-      const text = response.data.choices[0].text;
-      setData([
-        ...data,
-        { type: "user", text: textInput },
-        { type: "bot", text: text },
-      ]);
-      setTextInput("");
+      setUserInput("");
     } catch (error) {
-      console.error("Error sending request to OpenAI API:", error.message);
-      // You can add further error handling or user feedback here
+      console.log(error);
+      setError("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
     }
   };
   
+  const handleSpeech = async (text) => {
+    if (isSpeaking) {
+      stop();
+      setIsSpeaking(false);
+    } else {
+      if (!(await isSpeakingAsync())) {
+        speak(text);
+        setIsSpeaking(true);
+      }
+    }
+  };
 
   return (
     <LinearGradient
       colors={["#EAECC6", "#E7E9BB", "#2BC0E4"]}
       style={styles.gradient}
     >
-      <SafeAreaView style={styles.container}>
-        <View style={styles.titlecontainer}>
-          <Image
-            style={styles.image}
-            source={require("../../assets/AIChatbot.png")}
-          />
-          <Text style={styles.titletext}>AI Chatbot</Text>
-        </View>
-        <FlatList
-          data={data}
-          keyExtractor={(item, index) => index.toString()}
-          style={styles.body}
-          renderItem={({ item }) => (
-            <View style={{ flexDirection: "row", padding: 10 }}>
-              <Text
+      <SafeAreaView style={{ flex: 1 }}>
+        <ScrollView
+          contentContainerStyle={{ flexGrow: 1, justifyContent: "flex-end", paddingTop:40 }}
+        >
+          {chat.map((message, index) => (
+            <View key={index} style={{ paddingHorizontal: 10 }}>
+              <View>
+                {message.role === "user" ? (
+                  <View
+                    className=" rounded-lg flex w-full"
+                    style={{ alignItems: "flex-end" }}
+                  >
+                    <FontAwesome5 name="user-circle" size={32} color="black" />
+                  </View>
+                ) : (
+                  <Image
+                    source={require("../../assets/AIChatbot.png")}
+                    size={32}
+                    color={Color.Primary}
+                    style={styles.icon}
+                  />
+                )}
+              </View>
+              <View
                 style={{
-                  fontWeight: "bold",
-                  color: item.type === "user" ? "green" : "red",
+                  alignItems:
+                    message.role === "user" ? "flex-end" : "flex-start",
+                  marginVertical: 3,
+                  marginHorizontal: 12,
                 }}
               >
-                {item.type === "user" ? "Ninza" : "Bot"}
-              </Text>
-              <Text style={styles.bot}>{item.text}</Text>
+                <View
+                  className="shadow-lg shadow-orange-400"
+                  style={{
+                    backgroundColor:
+                      message.role === "user" ? "#2B8CFF" : "#b8ba8f",
+                    padding: 10,
+                    borderTopLeftRadius: message.role === "user" ? 32 : 0,
+                    borderTopRightRadius: message.role === "user" ? 0 : 32,
+                    borderBottomLeftRadius: 32,
+                    borderBottomRightRadius: 32,
+                  }}
+                >
+                  <Text
+                    style={{ color: message.role === "user" ? "#fff" : "#000" }}
+                  >
+                    {message.parts[0].text}
+                  </Text>
+                  {message.role === "model" && (
+                    <View style={{ flexDirection: "row", marginTop: 5, justifyContent:"space-between" }}>
+                      <Text></Text>
+                      <TouchableOpacity
+                        onPress={() => handleSpeech(message.parts[0].text)}
+                        style={{backgroundColor: "#fff", padding: 8, borderRadius: 50,}}
+                      >
+                       <FontAwesome5 name="volume-up" size={14} color="black" />
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+              </View>
+            </View>
+          ))}
+          {loading && (
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                marginBottom: 10,
+              }}
+            >
+              <ActivityIndicator size="small" color="#FFA001" />
             </View>
           )}
-        />
-        <View style={styles.inputContainer}>
+        </ScrollView>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            padding: 10,
+          }}
+        >
           <TextInput
-            style={styles.input}
-            placeholder="Enter text here..."
-            value={textInput}
-            onChangeText={(text) => setTextInput(text)}
+            style={{
+              flex: 1,
+              borderWidth: 1,
+              borderColor: "#000",
+              color: "#000",
+              borderRadius: 10,
+              padding: 8,
+            }}
+            value={userInput}
+            onChangeText={setUserInput}
+            placeholder="Type your message..."
           />
-          <TouchableOpacity style={styles.button} onPress={handleSend}>
-            <Text style={styles.buttonText}>Sent</Text>
+          <TouchableOpacity
+            className="shadow-sm shadow-orange-400"
+            style={{
+              marginLeft: 10,
+              backgroundColor: "#fff",
+              padding: 12,
+              borderRadius: 50,
+            }}
+            onPress={handleUserInput}
+            disabled={!userInput.trim()}
+          >
+            <FontAwesome5 name="paper-plane" size={18} color="black" />
           </TouchableOpacity>
         </View>
       </SafeAreaView>
@@ -100,70 +193,160 @@ const AIChatbot = () => {
   );
 };
 
+export default AIChatbot;
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  contentContainer: {
+    marginTop: 50,
+    alignItems: "center",
+    alignContent: "center",
+  },
   gradient: {
     flex: 1,
   },
-
-  container: {
-    flex: 1,
-    
+  scrollView: {
+    flexGrow: 1,
   },
-
-  titlecontainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop:60,
-    marginLeft:80,
-  },
-
-  image: {
-    height: 60,
-    width: 60,
-  },
-
-  titletext: {
-    fontSize: 25,
-    fontWeight: "bold",
+  textContainer: {
     marginLeft: 10,
+    marginRight: 0,
   },
-
-  body: {
-    width: "100%",
-    marginVertical: 10,
+  nameText: {
+    color: "orange",
+    fontSize: 30,
+    fontWeight: "bold",
+    marginRight: 30,
+    letterSpacing: -0.5,
   },
-
-  bot: {
-    fontSize: 16,
+  undernameText: {
+    color: Color.Primary,
+    fontSize: 10,
+    marginLeft: 10,
+    marginBottom: -20,
   },
-
-  inputContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    marginBottom: 20,
+  logoImage: {
+    width: 100,
+    height: 70,
+    marginLeft: 80,
+    marginTop: -5,
+    marginBottom: 100,
   },
-
+  page: {
+    marginTop: -130,
+  },
+  inputSection: {
+    marginTop: 20,
+    marginHorizontal: 30,
+    position: "relative",
+  },
+  iconContainer: {
+    position: "absolute",
+    top: 13,
+    left: 15,
+  },
+  passworshowicon: {
+    position: "absolute",
+    top: 13,
+    right: 25,
+  },
+  icon: {
+    width: 48,
+    height: 48,
+  },
   input: {
-    flex: 1,
-    borderWidth:1,
-    margin: 10,
-    padding: 10,
+    fontSize: 15,
+    height: 50,
+    width: 320,
+    marginLeft: 0,
+    marginRight: 30,
+    borderWidth: 1,
+    paddingLeft: 45,
+    paddingRight: 50,
+    borderRadius: 10,
+  },
+  underline: {
+    height: 0,
+  },
+  login: {
+    marginTop: 20,
+    borderWidth: 0,
     borderRadius: 5,
+    width: "55%",
+    height: 40,
+    backgroundColor: Color.Primary,
+  },
+  logintxt: {
+    marginTop: 7,
+    textAlign: "center",
+    color: "white",
+    fontWeight: "500",
+    fontSize: 20,
+  },
+  loginview: {
+    alignItems: "center",
+  },
+  signup: {
+    flexDirection: "row",
+    textAlign: "center",
+    justifyContent: "center",
+    marginTop: 10,
+  },
+  signuptext: {
+    color: "red",
+  },
+  orContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginVertical: 40,
+  },
+  line: {
+    flex: 1,
+    height: 1,
+    backgroundColor: Color.Primary,
+  },
+  or: {
+    marginHorizontal: 5,
+  },
+  errormessage: {
+    color: "red",
+    fontSize: 16,
+    textAlign: "center",
+    marginTop: 10,
   },
 
+  uploadButton: {
+    backgroundColor: "blue",
+    borderRadius: 5,
+    padding: 10,
+    marginTop: 10,
+    marginLeft: 40,
+    alignItems: "center",
+    width: 300, // Adjust the width as needed
+  },
+
+  imageContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
   button: {
     backgroundColor: "black",
-    paddingVertical: 12,
-    paddingHorizontal: 20,
+    padding: 10,
     borderRadius: 5,
+    marginTop: 10,
+    width: 310,
+    justifyContent: "center",
+    alignItems: "center",
+    flexDirection: "row",
   },
-
   buttonText: {
-    color: "white",
+    fontSize: 16,
     fontWeight: "bold",
+    textAlign: "center",
+    color: "white",
+    marginLeft: 20,
   },
 });
-
-export default AIChatbot;
