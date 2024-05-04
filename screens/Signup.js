@@ -90,7 +90,6 @@ const Signup = ({ navigation }) => {
       phone_no: fdata.phone_no,
       email: fdata.email,
       password: fdata.password,
-      image: fdata.image, // Include image data in user data
     };
   
     // console.log("User data:", userData);
@@ -98,8 +97,7 @@ const Signup = ({ navigation }) => {
       !userData.name ||
       !userData.phone_no ||
       !userData.email ||
-      !userData.password ||
-      !userData.image // Check if image data is present
+      !userData.password
     ) {
       setErrmessage("All fields are required");
       return;
@@ -118,7 +116,7 @@ const Signup = ({ navigation }) => {
   
     try {
       showLoader();
-      const response = await axios.post("http://192.168.1.2:3000/api/v1/auth/signup", userData);
+      const response = await axios.post("http://192.168.1.2:8000/api/v1/auth/signup", userData);
       const data = response.data;
       
       console.log("Response from backend:", data);
@@ -255,23 +253,7 @@ const Signup = ({ navigation }) => {
               </View>
             </View>
 
-            <View style={styles.imageContainer}>
-              <TouchableOpacity style={styles.button} onPress={pickImage}>
-                <FontAwesome
-                  name="image"
-                  size={24}
-                  color="white"
-                  style={styles.imageIcon}
-                />
-                <Text style={styles.buttonText}>Upload Image</Text>
-              </TouchableOpacity>
-            </View>
-            {selectedImage && (
-              <Image
-                source={{ uri: selectedImage }}
-                style={styles.imagePreview}
-              />
-            )}
+            
 
             <View style={styles.loginview}>
               <TouchableOpacity onPress={Sendtobackend} style={styles.login}>

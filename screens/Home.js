@@ -30,7 +30,7 @@ const Home = ({ navigation, route }) => {
               {profileImage ? (
                 <Image source={{ uri: profileImage }} style={styles.profileImage} />
               ) : (
-                <Image source={require("../assets/Faizan.png")} style={styles.profileImage} />
+                <Image source={{ uri: 'https://cdn-icons-png.flaticon.com/128/8483/8483624.png' }} style={styles.profileImage} />
               )}
             
                 </View>
@@ -153,13 +153,14 @@ const styles = StyleSheet.create({
   profiletab:{
     marginLeft:20,
     marginTop:1,
-    flexDirection:'row'
+    flexDirection:'row',
+    alignItems:'center',
   },
 
   profile: {
     backgroundColor: 'black',
-    width: 65,
-    height: 65,
+    width: 50,
+    height: 50,
     borderWidth: 1,
     borderRadius: 75,
     alignItems: 'center',
@@ -181,8 +182,6 @@ const styles = StyleSheet.create({
   },
 
   detail: {
-    marginLeft: 1,
-    marginTop:15,
     marginEnd: 100,
   },
 
@@ -290,8 +289,8 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   profileImage: {
-    width: 60,
-    height: 60,
+    width: 48,
+    height: 48,
     borderRadius: 75,
     borderWidth: 5,
   },
