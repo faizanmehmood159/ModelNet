@@ -36,39 +36,7 @@ const CustomerSupport = () => {
           style={styles.messagesContainer}
           contentContainerStyle={styles.messagesContentContainer}
         >
-          {messages.map((message, index) => (
-            <View
-              key={index}
-              style={[
-                styles.messageBubble,
-                {
-                  alignSelf: message.sender === "user" ? "flex-end" : "flex-start",
-                  backgroundColor: message.sender === "user" ? "#4CAF50" : "#fff",
-                },
-              ]}
-            >
-              <Text
-                style={[
-                  styles.messageText,
-                  { color: message.sender === "user" ? "#fff" : "#000" },
-                ]}
-              >
-                {message.message}
-              </Text>
-            </View>
-          ))}
         </ScrollView>
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            placeholder="Type your message..."
-            value={message}
-            onChangeText={(text) => setMessage(text)}
-          />
-          <TouchableOpacity style={styles.sendButton} onPress={sendMessage}>
-            <Text style={styles.sendButtonText}>Send</Text>
-          </TouchableOpacity>
-        </View>
       </SafeAreaView>
     </LinearGradient>
   );
