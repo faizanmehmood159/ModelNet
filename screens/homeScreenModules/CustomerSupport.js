@@ -10,6 +10,8 @@ import {
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { WebView } from 'react-native-webview';
+
 
 const CustomerSupport = () => {
   const [message, setMessage] = useState("");
@@ -28,15 +30,10 @@ const CustomerSupport = () => {
       style={styles.gradient}
     >
       <SafeAreaView style={styles.container}>
-        <View style={styles.titleContainer}>
-          
-          <Text style={styles.titleText}>Customer Support</Text>
-        </View>
-        <ScrollView
-          style={styles.messagesContainer}
-          contentContainerStyle={styles.messagesContentContainer}
-        >
-        </ScrollView>
+      <WebView
+      style={styles.container}
+      source={{ uri: 'https://www.comtechradix.com/' }}
+    />
       </SafeAreaView>
     </LinearGradient>
   );
