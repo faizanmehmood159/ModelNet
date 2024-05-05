@@ -52,7 +52,8 @@
     "url-encode-decode": "^1.0.0",
     "expo-speech": "~11.3.0",
     "react-native-webview": "13.2.2",
-    "@react-native-async-storage/async-storage": "1.18.2"
+    "@react-native-async-storage/async-storage": "1.18.2",
+    "expo-splash-screen": "~0.20.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
