@@ -30,14 +30,15 @@ const SpeedTest = () => {
       style={styles.gradient}
     >
       <SafeAreaView style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Internet Speed Test</Text>
+        <View style={styles.titleContainer}><Text>.</Text>
         </View>
         <View style={styles.webviewContainer}>
           <WebView
             style={styles.webview}
             source={{ uri: 'https://fast.com/' }}
           />
+        </View>
+        <View style={styles.footerContainer}><Text>.</Text>
         </View>
       </SafeAreaView>
     </LinearGradient>
@@ -55,8 +56,21 @@ const styles = StyleSheet.create({
   },
   titleContainer: {
     alignItems: "center",
-    marginTop: height * 0.05,
-    marginBottom: height * 0.03,
+    zIndex: 10,
+    backgroundColor: "white",
+    height: height * 0.2,
+    width: width ,
+    position: "absolute",
+  },
+  
+  footerContainer: {
+    alignItems: "center",
+    zIndex: 10,
+    backgroundColor: "white",
+    height: height * 0.5,
+    width: width ,
+    position: "absolute",
+    bottom:0
   },
   titleText: {
     fontSize: width * 0.06,
@@ -69,10 +83,10 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 10,
     overflow: "hidden",
-    marginHorizontal: width * 0.05,
   },
   webview: {
     flex: 1,
+    height:100
   },
 });
 
