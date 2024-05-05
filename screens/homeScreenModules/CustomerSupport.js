@@ -29,12 +29,9 @@ const CustomerSupport = () => {
       colors={["#EAECC6", "#E7E9BB", "#2BC0E4"]}
       style={styles.gradient}
     >
-      <SafeAreaView style={styles.container}>
-      <WebView
-      style={styles.container}
-      source={{ uri: 'https://www.comtechradix.com/' }}
-    />
-      </SafeAreaView>
+      <Text>
+      This is customrt support
+      </Text>
     </LinearGradient>
   );
 };
