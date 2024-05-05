@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import {
   View,
   Text,
@@ -15,8 +15,11 @@ import Color from "../constants/Colors";
 import Title from "../components/Title";
 import { useGlobalLoader } from "../components/loader/GlobalLoaderProvider";
 import axios from "axios"; // Import axios for making HTTP requests
+import { AuthContext } from "../context/AuthContext"; 
 
 const Login = ({ navigation }) => {
+  const { signIn } = useContext(AuthContext); // Access the signIn function from the context
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -34,6 +37,9 @@ const Login = ({ navigation }) => {
   };
 
   const sendToBackend = async () => {
+
+   
+
     try {
       // Front-end validation
       if (!validateEmail(email)) {
@@ -50,7 +56,7 @@ const Login = ({ navigation }) => {
       showLoader();
 
       // Backend API call using Axios
-      const response = await axios.post("http://192.168.1.2:8000/api/v1/auth/signin", {
+      const response = await axios.post("http://192.168.1.3:8000/api/v1/auth/signin", {
         email,
         password
       });
@@ -59,7 +65,10 @@ const Login = ({ navigation }) => {
 
       if (data.success) {
         showToast("Welcome.", ToastAndroid.SHORT);
-        navigation.navigate("Home");
+        const token = 'your_generated_token';
+
+        // Call the signIn function with the token
+        signIn(token);
         console.log("User logged in successfully!");
         
       }

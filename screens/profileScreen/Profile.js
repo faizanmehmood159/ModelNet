@@ -1,11 +1,13 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Alert, Button } from "react-native";
 import * as ImagePicker from 'expo-image-picker'; 
 import { LinearGradient } from "expo-linear-gradient";
-
+import { AuthContext } from "../../context/AuthContext";
 const Profile = ({ navigation }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [base64Image, setBase64Image] = useState(null);
+  const { signOut } = useContext(AuthContext); // Access the signOut function from the context
+
 
   const pickImage = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -53,6 +55,9 @@ const Profile = ({ navigation }) => {
       Alert.alert('Error', 'Failed to upload profile picture');
     }
   };
+  const handleSignOut = () => {
+    signOut();
+  };
 
   return (
     <LinearGradient
@@ -92,7 +97,7 @@ const Profile = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           <View style={styles.textContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate("Login")}>
+            <TouchableOpacity onPress={handleSignOut}>
               <Text style={styles.text}>Logout</Text>
             </TouchableOpacity>
           </View>

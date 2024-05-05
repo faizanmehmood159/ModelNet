@@ -1,6 +1,6 @@
 // Navigation.js
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import GetStart from '../screens/GetStart';
@@ -23,7 +23,8 @@ import FAQ from '../screens/profileScreen/FAQ';
 import BillsandReceipt from '../screens/homeScreenModules/BillsandRecipt';
 import AIChatbot from '../screens/homeScreenModules/AIChatbot';
 import CustomerSupport from '../screens/homeScreenModules/CustomerSupport';
-
+import { AuthContext } from '../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -31,15 +32,61 @@ const Tab = createBottomTabNavigator();
 
 
 const Navigation = () => {
+  const [userToken, setUserToken] = useState(null);
+
+  useEffect(() => {
+    // Load user token from AsyncStorage
+    const bootstrapAsync = async () => {
+      try {
+        const token = await AsyncStorage.getItem('userToken');
+        if (token) {
+          setUserToken(token);
+        }
+      } catch (error) {
+        // Error retrieving data
+        console.error('Error loading user token:', error.message);
+      }
+    };
+
+    bootstrapAsync();
+  }, []);
+
+  const signIn = async (token) => {
+    try {
+      // Save user token to AsyncStorage
+      await AsyncStorage.setItem('userToken', token);
+      setUserToken(token);
+    } catch (error) {
+      // Error saving data
+      console.error('Error saving user token:', error.message);
+    }
+  };
+
+  const signOut = async () => {
+    try {
+      // Remove user token from AsyncStorage
+      await AsyncStorage.removeItem('userToken');
+      setUserToken(null);
+    } catch (error) {
+      // Error removing data
+      console.error('Error removing user token:', error.message);
+    }
+  };
+
+  const authContext = {
+    signIn,
+    signOut,
+    userToken,
+  };
+
+
   return (
+    <AuthContext.Provider value={authContext}>
     <NavigationContainer>
       <Stack.Navigator >
-        <Stack.Screen name="GetStart" component={GetStart} options={{ headerShown: false }} />
-        <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+      {userToken ? (
+            <>
         <Stack.Screen name="Home" component={BottomTab} options={{ headerShown: false }} />
-        <Stack.Screen name="Forgot" component={Forgot} options={{ headerShown: false }} />
         <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={Profile} options={{headerTransparent: true}} />
         <Stack.Screen name="ChangePassword" component={ChangePassword} options={{headerTransparent: true}} />
@@ -52,10 +99,19 @@ const Navigation = () => {
         <Stack.Screen name="CustomerSupport" component={CustomerSupport}  options={{headerTransparent: true}} />
         <Stack.Screen name="BillsandReceipt" component={BillsandReceipt }  options={{headerTransparent: true}} />
         <Stack.Screen name="Register" component={RegisterComponent}  options={{headerTransparent: true}} />
-
-
+</> 
+) : (
+  <>
+        <Stack.Screen name="GetStart" component={GetStart} options={{ headerShown: false }} />
+        <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+        <Stack.Screen name="Forgot" component={Forgot} options={{ headerShown: false }} />
+</>
+)}
       </Stack.Navigator>
     </NavigationContainer>
+    </AuthContext.Provider>
   );
 };
 
