@@ -30,16 +30,16 @@ const SpeedTest = () => {
       style={styles.gradient}
     >
       <SafeAreaView style={styles.container}>
-        <View style={styles.titleContainer}><Text>.</Text>
-        </View>
+        <LinearGradient colors={["#EAECC6", "#E7E9BB", "#2BC0E4"]} style={styles.titleContainer}><Text>.</Text>
+        </LinearGradient>
         <View style={styles.webviewContainer}>
           <WebView
             style={styles.webview}
             source={{ uri: 'https://fast.com/' }}
           />
         </View>
-        <View style={styles.footerContainer}><Text>.</Text>
-        </View>
+        <LinearGradient  colors={["#EAECC6", "#E7E9BB", "#2BC0E4"]}  style={styles.footerContainer}><Text>.</Text>
+        </LinearGradient>
       </SafeAreaView>
     </LinearGradient>
   );
@@ -57,10 +57,12 @@ const styles = StyleSheet.create({
   titleContainer: {
     alignItems: "center",
     zIndex: 10,
-    backgroundColor: "white",
-    height: height * 0.2,
+    backgroundColor: "red",
+    height: height * 0.3,
     width: width ,
     position: "absolute",
+    borderBottomRightRadius: 100,
+    borderBottomLeftRadius: 100
   },
   
   footerContainer: {
@@ -70,7 +72,9 @@ const styles = StyleSheet.create({
     height: height * 0.5,
     width: width ,
     position: "absolute",
-    bottom:0
+    bottom:0,
+    borderTopRightRadius: 100,
+    borderTopLeftRadius: 100
   },
   titleText: {
     fontSize: width * 0.06,
@@ -80,13 +84,15 @@ const styles = StyleSheet.create({
   webviewContainer: {
     flex: 1,
     borderWidth: 1,
+    justifyContent: "center",
+    marginTop: 50,
     borderColor: "#ccc",
     borderRadius: 10,
     overflow: "hidden",
   },
   webview: {
     flex: 1,
-    height:100
+    height:200
   },
 });
 
