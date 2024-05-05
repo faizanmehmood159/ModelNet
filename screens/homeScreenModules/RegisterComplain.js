@@ -14,15 +14,12 @@ const RegisterComponent = () => {
 
   const navigation = useNavigation();
 
-  // Function to handle complaint submission
   const handleComplaintSubmit = () => {
-    // Check if any field is empty
     if (!id || !name || !email || !phone_no || !complaint) {
       Alert.alert('Error', 'Please fill in all fields');
       return;
     }
 
-    // Send complaint data to the backend
     fetch('http://192.168.1.2:3000/api/v1/complaint', {
       method: 'POST',
       headers: {
@@ -44,12 +41,10 @@ const RegisterComponent = () => {
       }
     })
     .then(data => {
-      console.log(data);
       Alert.alert('Success', 'Complaint registered successfully');
       navigation.navigate('Home');
     })
     .catch(error => {
-      console.error(error);
       Alert.alert('Error', `Failed to register complaint: ${error.message}`);
     });
   };
@@ -126,7 +121,6 @@ const RegisterComponent = () => {
 
 export default RegisterComponent;
 
-// Styles
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,

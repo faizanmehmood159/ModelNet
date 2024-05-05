@@ -26,7 +26,6 @@ const AIChatbot = () => {
   const API_KEY = "AIzaSyDZho2QET6QahxMVeyl57hFbV53WELTs8c";
 
   const handleUserInput = async () => {
-    // Add user input to chat
     let updatedChat = [
       ...chat,
       { role: "user", parts: [{ text: userInput + " this query is about internet." }] },
@@ -55,7 +54,6 @@ const AIChatbot = () => {
   
       setUserInput("");
     } catch (error) {
-      console.log(error);
       setError("An error occurred. Please try again.");
     } finally {
       setLoading(false);
@@ -324,7 +322,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 40,
     alignItems: "center",
-    width: 300, // Adjust the width as needed
+    width: 300,
   },
 
   imageContainer: {

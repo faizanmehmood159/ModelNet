@@ -24,7 +24,7 @@ const Signup = ({ navigation }) => {
     phone_no: "",
     email: "",
     password: "",
-    image: null, // Added image state
+    image: null,
   });
   const { showLoader, hideLoader } = useGlobalLoader();
 
@@ -56,7 +56,6 @@ const Signup = ({ navigation }) => {
         handleImage(imagePickerResult.uri);
       }
     } catch (error) {
-      console.error('Error picking image:', error);
       Alert.alert('Error', 'Failed to pick an image. Please try again.');
     }
   };
@@ -66,9 +65,8 @@ const Signup = ({ navigation }) => {
       const response = await fetch(uri);
       const blob = await response.blob();
       const base64Data = await convertBlobToBase64(blob);
-      setFdata({ ...fdata, image: base64Data }); // Set base64 image in state
+      setFdata({ ...fdata, image: base64Data });
     } catch (error) {
-      console.error('Error handling image:', error);
       Alert.alert('Error', 'Failed to handle the selected image. Please try again.');
     }
   };
@@ -83,7 +81,6 @@ const Signup = ({ navigation }) => {
   };
 
   const Sendtobackend = async () => {
-    console.log("Sending data to backend...");
     
     const userData = {
       name: fdata.name,
@@ -92,7 +89,6 @@ const Signup = ({ navigation }) => {
       password: fdata.password,
     };
   
-    // console.log("User data:", userData);
     if (
       !userData.name ||
       !userData.phone_no ||
@@ -119,25 +115,19 @@ const Signup = ({ navigation }) => {
       const response = await axios.post("http://192.168.1.2:8000/api/v1/auth/signup", userData);
       const data = response.data;
       
-      console.log("Response from backend:", data);
       if (data.error) {
         if (data.error.includes("User already exists")) {
-          // Display "User already exists" error message
           setErrmessage("User already exists. Please sign in or use a different email.");
         } else {
-          setErrmessage(data.error); // Set error message from backend
-          console.error("Error:", data.error);
+          setErrmessage(data.error);
         }
       } else {
-        console.log("Signup Successful:", data.message);
         Alert.alert("Signup Successful", data.message);
         setErrmessage(null);
         navigation.navigate("Login");
       }
     } catch (error) {
-      console.error("Error sending data to backend:", error); // Log any errors
       if (error.response && error.response.status === 400) {
-        // Extract error message from Axios error object
         const errorMessage = error.response.data.message || "Bad Request. Please check your input data.";
         setErrmessage(errorMessage);
       } else {
@@ -410,7 +400,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 40,
     alignItems: "center",
-    width: 300, // Adjust the width as needed
+    width: 300,
   },
 
   imageContainer: {

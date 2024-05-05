@@ -27,7 +27,6 @@ const ResetPassword = ({ navigation }) => {
         Alert.alert('Error', errorData.message || 'Failed to reset password');
       }
     } catch (error) {
-      console.error('Error resetting password:', error);
       Alert.alert('Error', 'Failed to reset password');
     }
   };

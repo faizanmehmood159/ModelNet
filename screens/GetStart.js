@@ -62,12 +62,12 @@ const GetStart = () => {
           DotComponent={Dots}
           bottomBarColor="solid"
           onDone={handleDone}
-          onSkip={() => navigation.navigate('Welcome')} // Handle skip action
+          onSkip={() => navigation.navigate('Welcome')}
           pages={[
             {
               backgroundColor: 'transparent',
               title: '',
-              subtitle: '', // Add a subtitle property
+              subtitle: '',
               image: (
                 <View style={styles.pageContainer}>
                   <Text style={styles.title}>ModelNet</Text>

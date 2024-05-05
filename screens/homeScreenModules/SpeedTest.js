@@ -7,13 +7,11 @@ const SpeedTest = () => {
   const [connectionType, setConnectionType] = useState('');
 
   useEffect(() => {
-    // Subscribe to network state changes
     const unsubscribe = NetInfo.addEventListener(state => {
       setIsConnected(state.isConnected);
       setConnectionType(state.type);
     });
 
-    // Clean up subscription on component unmount
     return () => unsubscribe();
   }, []);
 

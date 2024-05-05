@@ -60,15 +60,12 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     marginBottom:100
-    // alignItems: 'center',
   },
   contentContainer: {
-    // alignItems: 'center',
   },
   contentContainer: {
     marginTop: 10,
     alignItems: 'center',
-    // alignContent:'center'
   },
 
   textContainer:{

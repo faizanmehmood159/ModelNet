@@ -6,7 +6,7 @@ import { AuthContext } from "../../context/AuthContext";
 const Profile = ({ navigation }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [base64Image, setBase64Image] = useState(null);
-  const { signOut } = useContext(AuthContext); // Access the signOut function from the context
+  const { signOut } = useContext(AuthContext);
 
 
   const pickImage = async () => {
@@ -23,7 +23,7 @@ const Profile = ({ navigation }) => {
       quality: 1,
     });
   
-    if (!result.canceled) { // Use 'cancelled' instead of 'canceled'
+    if (!result.canceled) {
       const selectedImage = result.assets[0];
       setProfileImage(selectedImage.uri);
       setBase64Image(selectedImage.base64);
@@ -46,12 +46,11 @@ const Profile = ({ navigation }) => {
       }
 
       const data = await response.json();
-      const uploadedImageURI = data.imageURI; // Adjust this based on your backend response
+      const uploadedImageURI = data.imageURI;
       setProfileImage(uploadedImageURI);
 
       Alert.alert('Success', 'Profile picture uploaded successfully');
     } catch (error) {
-      console.error('Error uploading profile picture:', error);
       Alert.alert('Error', 'Failed to upload profile picture');
     }
   };

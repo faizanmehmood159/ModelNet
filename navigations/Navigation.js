@@ -1,5 +1,3 @@
-// Navigation.js
-
 import React, { useEffect, useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -7,7 +5,7 @@ import GetStart from '../screens/GetStart';
 import Welcome from '../screens/Welcome';
 import Login from '../screens/Login';
 import Signup from '../screens/Signup';
-import Home from '../screens/Home'; // Import the Home component
+import Home from '../screens/Home';
 import Forgot from '../screens/forgotAndReseetPassword/Forgot';
 import ResetPassword from '../screens/forgotAndReseetPassword/ResetPassword';
 import SpeedTest from '../screens/homeScreenModules/SpeedTest';
@@ -35,7 +33,6 @@ const Navigation = () => {
   const [userToken, setUserToken] = useState(null);
 
   useEffect(() => {
-    // Load user token from AsyncStorage
     const bootstrapAsync = async () => {
       try {
         const token = await AsyncStorage.getItem('userToken');
@@ -43,8 +40,6 @@ const Navigation = () => {
           setUserToken(token);
         }
       } catch (error) {
-        // Error retrieving data
-        console.error('Error loading user token:', error.message);
       }
     };
 
@@ -53,23 +48,17 @@ const Navigation = () => {
 
   const signIn = async (token) => {
     try {
-      // Save user token to AsyncStorage
       await AsyncStorage.setItem('userToken', token);
       setUserToken(token);
     } catch (error) {
-      // Error saving data
-      console.error('Error saving user token:', error.message);
     }
   };
 
   const signOut = async () => {
     try {
-      // Remove user token from AsyncStorage
       await AsyncStorage.removeItem('userToken');
       setUserToken(null);
     } catch (error) {
-      // Error removing data
-      console.error('Error removing user token:', error.message);
     }
   };
 

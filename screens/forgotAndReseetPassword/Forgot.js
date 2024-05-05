@@ -32,20 +32,17 @@ const Forgot = ({ navigation }) => {
         throw new Error('Failed to send OTP');
       }
   
-      // Check the content type of the response
       const contentType = response.headers.get('content-type');
       if (!contentType || !contentType.includes('application/json')) {
         throw new Error('Unexpected response format');
       }
   
-      // Parse response as JSON
       const responseData = await response.json();
   
       
       Alert.alert('Success', responseData.message || 'OTP sent successfully');
       navigation.navigate('ResetPassword');
     } catch (error) {
-      console.error('Error sending OTP:', error);
       Alert.alert('Error', error.message || 'Failed to send OTP');
     }
   };

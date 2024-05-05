@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, SafeAreaView, ScrollView, TextInput, TouchableOpacity, Text, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import Color from '../../constants/Colors';
-import axios from 'axios'; // Import Axios
+import axios from 'axios';
 import { useNavigation } from '@react-navigation/native';
 
 const NewInstallation = () => {
@@ -13,16 +13,13 @@ const NewInstallation = () => {
   const [address, setAddress] = useState('');
   const navigation = useNavigation();
 
-  // Function to handle form submission
   const handleInstallationFormSubmit = async () => {
     try {
-      // Validate form inputs
       if (!name.trim() || !email.trim() || !phone_no.trim() || !cnic.trim() || !address.trim()) {
         Alert.alert('Validation Error', 'All fields are required');
         return;
       }
   
-      // Make POST request to backend
       const response = await axios.post('http://192.168.1.2:3000/installationForm', {
         name,
         email,
@@ -31,25 +28,18 @@ const NewInstallation = () => {
         address
       });
   
-      // Check if form submission is successful
       if (response.data.success) {
-        // Show success message
         Alert.alert('Success', 'Installation form submitted successfully');
-        // Clear form fields
         setName('');
         setEmail('');
         setPhoneNo('');
         setCnic('');
         setAddress('');
-        // Navigate to desired screen
         navigation.navigate('Home'); 
       } else {
-        // Show error message
         Alert.alert('Error', 'Failed to submit installation form');
       }
     } catch (error) {
-      console.error('Error submitting installation form:', error);
-      // Show error message
       Alert.alert('Error', 'Failed to submit installation form. Please try again later.');
     }
   };
@@ -137,7 +127,6 @@ const NewInstallation = () => {
 export default NewInstallation;
 
 
-// Styles
 const styles = StyleSheet.create({
   gradient: {
     flex: 1,

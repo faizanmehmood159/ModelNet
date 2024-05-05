@@ -7,10 +7,7 @@ function SocialMedia() {
   const [pressedIcon, setPressedIcon] = useState(null);
 
   const handleIconPress = (socialMedia) => {
-    // Handle icon press based on the social media type (e.g., 'facebook', 'google', 'apple')
-    console.log(`Icon pressed: ${socialMedia}`);
     setPressedIcon(socialMedia);
-    // Add any additional logic or navigation here
   };
 
   return (

@@ -105,8 +105,6 @@ const styles = StyleSheet.create({
     fontSize:30,
     height:30,
     
-    // backgroundColor:'red',
-    
   },
 
   answer: {

@@ -14,11 +14,11 @@ import { LinearGradient } from "expo-linear-gradient";
 import Color from "../constants/Colors";
 import Title from "../components/Title";
 import { useGlobalLoader } from "../components/loader/GlobalLoaderProvider";
-import axios from "axios"; // Import axios for making HTTP requests
+import axios from "axios";
 import { AuthContext } from "../context/AuthContext"; 
 
 const Login = ({ navigation }) => {
-  const { signIn } = useContext(AuthContext); // Access the signIn function from the context
+  const { signIn } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +31,6 @@ const Login = ({ navigation }) => {
   };
 
   const validateEmail = (email) => {
-    // Regular expression for basic email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
@@ -41,7 +40,6 @@ const Login = ({ navigation }) => {
    
 
     try {
-      // Front-end validation
       if (!validateEmail(email)) {
         throw new Error("Invalid email format");
       }
@@ -55,7 +53,6 @@ const Login = ({ navigation }) => {
       }
       showLoader();
 
-      // Backend API call using Axios
       const response = await axios.post("http://192.168.1.3:8000/api/v1/auth/signin", {
         email,
         password
@@ -66,10 +63,7 @@ const Login = ({ navigation }) => {
       if (data.success) {
         showToast("Welcome.", ToastAndroid.SHORT);
         const token = 'your_generated_token';
-
-        // Call the signIn function with the token
         signIn(token);
-        console.log("User logged in successfully!");
         
       }
        else {
@@ -83,10 +77,8 @@ const Login = ({ navigation }) => {
           setErrorMessage("Credential Error");
           showToast("Invalid email or password", ToastAndroid.LONG);
         }
-        console.error("Error:", data.message);
       }
     } catch (error) {
-      console.error("Error:", error);
       if (error.response && error.response.status === 401) {
         setErrorMessage("Incorret Credentials");
         showToast("Incorret Credentials", ToastAndroid.LONG);

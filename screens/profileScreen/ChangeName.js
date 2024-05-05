@@ -56,7 +56,6 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     alignItems: 'center',
     width: 200,
-    // height: 50,
     alignSelf: 'center',
   },
   buttonText: {

@@ -97,14 +97,6 @@ const Home = ({ navigation, route }) => {
                 </View>
               </TouchableOpacity>
             </View>
-
-            {/* <View style={styles.gridboxes1}>
-              <TouchableOpacity style={styles.gridbox1}></TouchableOpacity>
-              <TouchableOpacity style={styles.gridbox2}></TouchableOpacity>
-              <TouchableOpacity style={styles.gridbox3}>
-                
-              </TouchableOpacity>
-            </View> */}
           </View>
         </ScrollView>
         </SafeAreaView>
@@ -142,7 +134,6 @@ const styles = StyleSheet.create({
     backgroundColor:Color.Secondary,
     borderRadius: 10,
     shadowColor: 'black',
-    // shadowOpacity: 5,
     shadowRadius: 1,
     elevation: 5,
     flexDirection: 'row',
@@ -200,7 +191,6 @@ const styles = StyleSheet.create({
   },
 
   flatlist: {
-    // marginTop: 5,
     marginLeft:3,
     marginRight:3, 
     marginBottom: 10,
@@ -284,7 +274,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     shadowColor: 'black',
-    // shadowOpacity: 10,
     shadowRadius: 10,
     elevation: 5,
   },

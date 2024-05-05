@@ -107,7 +107,7 @@ const BillsandReceipt = () => {
     tabBarStyle: {
       marginTop: 28,
       height: 60,
-      backgroundColor: "transparent", // Fix typo here
+      backgroundColor: "transparent",
     },
     tabBarLabelStyle: { fontSize: 20, fontWeight: "bold" },
   }}
