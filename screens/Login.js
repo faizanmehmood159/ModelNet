@@ -59,6 +59,7 @@ const Login = ({ navigation }) => {
       });
 
       const data = response.data;
+      console.log(response)
 
       if (data.success) {
         showToast("Welcome.", ToastAndroid.SHORT);
