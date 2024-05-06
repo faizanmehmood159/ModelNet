@@ -66,8 +66,6 @@ const Login = ({ navigation }) => {
       if (data.success) {
         showToast("Welcome.", ToastAndroid.SHORT);
         const token = 'your_generated_token';
-
-        // Call the signIn function with the token
         signIn(token);
         console.log("User logged in successfully!");
         
