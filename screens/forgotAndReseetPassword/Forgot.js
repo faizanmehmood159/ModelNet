@@ -20,7 +20,7 @@ const Forgot = ({ navigation }) => {
 
   const sendOTP = async () => {
     try {
-      const response = await fetch('http://192.168.1.2:3000/api/v1/auth/forgotPassword', {
+      const response = await fetch('http://192.168.1.3:3000/api/v1/auth/forgotPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

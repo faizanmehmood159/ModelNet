@@ -20,7 +20,8 @@ const NewInstallation = () => {
         return;
       }
   
-      const response = await axios.post('http://192.168.1.2:3000/installationForm', {
+      // Make POST request to backend
+      const response = await axios.post('http://192.168.1.3:3000/installationForm', {
         name,
         email,
         phone_no,
