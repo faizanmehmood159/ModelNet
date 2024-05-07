@@ -3,10 +3,35 @@ import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, FlatList
 import { LinearGradient } from 'expo-linear-gradient';
 import Color from '../constants/Colors';
 import Profile from './profileScreen/Profile';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = ({ navigation, route }) => {
   const [profileImage, setProfileImage] = useState(null);
+  const [userName, setUserName] = useState('');
   
+   useEffect(() => {
+    fetchUserName();
+  }, []);
+
+  const fetchUserName = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await axios.get('http://192.168.1.4:8000/api/v1/auth/getLoggedInUserName', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        setUserName(response.data.name);
+      } else {
+        console.error('Failed to fetch user name:', response.data.errorMessage);
+      }
+    } catch (error) {
+      console.error('Error fetching user name:', error);
+    }
+  };
   const data = [
     { id: '1', image: require('../assets/offers1.png'), },
     { id: '2', image: require('../assets/offers.png'),  },
@@ -36,7 +61,7 @@ const Home = ({ navigation, route }) => {
                 </View>
               </TouchableOpacity>
               <View style={styles.detail}>
-                <Text style={styles.detailtext1}>Faizan Mehhmood</Text>
+                <Text style={styles.detailtext1}>{userName}</Text>
               </View>
             </View>
           </View>
@@ -76,7 +101,7 @@ const Home = ({ navigation, route }) => {
             </View>
 
             <View style={styles.gridboxes1}>
-              <TouchableOpacity onPress={() => navigation.navigate('RegisterComponent')} style={styles.gridbox1}>
+              <TouchableOpacity onPress={() => navigation.navigate('RegisterComplaint')} style={styles.gridbox1}>
               <View style ={styles.imageContainer}>
                 <Image source={require('../assets/complaint.png')} style={styles.image} />
                   <Text style ={styles.imageText}>Regester Complaint</Text>
@@ -96,7 +121,9 @@ const Home = ({ navigation, route }) => {
                   <Text style ={styles.imageText}>Bills & Recipts</Text>
                 </View>
               </TouchableOpacity>
+
             </View>
+            
           </View>
         </ScrollView>
         </SafeAreaView>
@@ -177,9 +204,10 @@ const styles = StyleSheet.create({
   },
 
   detailtext1: {
-    color: Color.Primary,
+    
+    color: 'black',
     fontSize: 22,
-    fontWeight: 'bold',
+    fontWeight: 'bold', 
     paddingLeft:10,
     justifyContent:'center',
     textAlign:'center',

@@ -36,49 +36,49 @@ const Signup = ({ navigation }) => {
     setShowPassword(!showPassword);
   };
 
-  const pickImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission Required', 'Please allow access to your photo library to upload an image.');
-      return;
-    }
+  // const pickImage = async () => {
+  //   const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+  //   if (status !== 'granted') {
+  //     Alert.alert('Permission Required', 'Please allow access to your photo library to upload an image.');
+  //     return;
+  //   }
 
-    try {
-      const imagePickerResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 4],
-        quality: 1,
-      });
+  //   try {
+  //     const imagePickerResult = await ImagePicker.launchImageLibraryAsync({
+  //       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+  //       allowsEditing: true,
+  //       aspect: [4, 4],
+  //       quality: 1,
+  //     });
       
-      if (!imagePickerResult.canceled) {
-        setSelectedImage(imagePickerResult.uri);
-        handleImage(imagePickerResult.uri);
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to pick an image. Please try again.');
-    }
-  };
+  //     if (!imagePickerResult.canceled) {
+  //       setSelectedImage(imagePickerResult.uri);
+  //       handleImage(imagePickerResult.uri);
+  //     }
+  //   } catch (error) {
+  //     Alert.alert('Error', 'Failed to pick an image. Please try again.');
+  //   }
+  // };
 
-  const handleImage = async (uri) => {
-    try {
-      const response = await fetch(uri);
-      const blob = await response.blob();
-      const base64Data = await convertBlobToBase64(blob);
-      setFdata({ ...fdata, image: base64Data });
-    } catch (error) {
-      Alert.alert('Error', 'Failed to handle the selected image. Please try again.');
-    }
-  };
+  // const handleImage = async (uri) => {
+  //   try {
+  //     const response = await fetch(uri);
+  //     const blob = await response.blob();
+  //     const base64Data = await convertBlobToBase64(blob);
+  //     setFdata({ ...fdata, image: base64Data });
+  //   } catch (error) {
+  //     Alert.alert('Error', 'Failed to handle the selected image. Please try again.');
+  //   }
+  // };
 
-  const convertBlobToBase64 = async (blob) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-  };
+  // const convertBlobToBase64 = async (blob) => {
+  //   return new Promise((resolve, reject) => {
+  //     const reader = new FileReader();
+  //     reader.readAsDataURL(blob);
+  //     reader.onloadend = () => resolve(reader.result);
+  //     reader.onerror = (error) => reject(error);
+  //   });
+  // };
 
   const Sendtobackend = async () => {
     
@@ -112,7 +112,7 @@ const Signup = ({ navigation }) => {
   
     try {
       showLoader();
-      const response = await axios.post("http://192.168.1.3:8000/api/v1/auth/signup", userData);
+      const response = await axios.post("http://192.168.1.4:8000/api/v1/auth/signup", userData);
       const data = response.data;
       
       if (data.error) {

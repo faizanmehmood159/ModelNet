@@ -11,7 +11,7 @@ import ResetPassword from '../screens/forgotAndReseetPassword/ResetPassword';
 import SpeedTest from '../screens/homeScreenModules/SpeedTest';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { StyleSheet, Text, View } from 'react-native';
-import RegisterComponent from '../screens/homeScreenModules/RegisterComplain';
+import RegisterComplaint from '../screens/homeScreenModules/RegisterComplain';
 import NewInstallation from '../screens/homeScreenModules/NewInstallation';
 import SettingScreen from '../screens/bottomTabScreens/SettingScreen';
 import Profile from '../screens/profileScreen/Profile';
@@ -84,10 +84,10 @@ const Navigation = () => {
         <Stack.Screen name="SpeedTest" component={SpeedTest}  options={{headerTransparent: true}}  />
         <Stack.Screen name="AIChatbot" component={AIChatbot} options={{headerTransparent: true}} />
         <Stack.Screen name="NewInstallation" component={NewInstallation} options={{headerTransparent: true}} />
-        <Stack.Screen name="RegisterComponent" component={RegisterComponent}  options={{headerTransparent: true}} />
+        <Stack.Screen name="RegisterComplaint" component={RegisterComplaint}  options={{headerTransparent: true}} />
         <Stack.Screen name="CustomerSupport" component={CustomerSupport}  options={{headerTransparent: true}} />
         <Stack.Screen name="BillsandReceipt" component={BillsandReceipt }  options={{headerTransparent: true}} />
-        <Stack.Screen name="Register" component={RegisterComponent}  options={{headerTransparent: true}} />
+        <Stack.Screen name="Register" component={RegisterComplaint}  options={{headerTransparent: true}} />
 </> 
 ) : (
   <>
