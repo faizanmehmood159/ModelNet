@@ -1,52 +1,54 @@
-
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
   StyleSheet,
-  Image,
   SafeAreaView,
   Alert
 } from "react-native";
-import { useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 import Color from "../../constants/Colors";
 
 const Forgot = ({ navigation }) => {
-  const[email, setEmail] = useState("");
+  const [email, setEmail] = useState("");  
+  const [errorMessage, setErrorMessage] = useState('');
+
+  const isValidEmail = (email) => {
+    return /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$/.test(email);
+  };
 
   const sendOTP = async () => {
     try {
-      const response = await fetch('http://192.168.1.4:3000/api/v1/auth/forgotPassword', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to send OTP');
+
+      if (!email.trim()) {
+        setErrorMessage('Please enter your email address');
+        return;
       }
-  
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        throw new Error('Unexpected response format');
+
+      if (!isValidEmail(email)) {
+        setErrorMessage('Please enter a valid email address');
+        return;
       }
-  
-      const responseData = await response.json();
-  
-      
-      Alert.alert('Success', responseData.message || 'OTP sent successfully');
-      navigation.navigate('ResetPassword');
-    } catch (error) {
-      Alert.alert('Error', error.message || 'Failed to send OTP');
+
+      const response = await axios.post(
+        "http://192.168.1.4:8000/api/v1/auth/sendOtp",
+        { email }
+      );
+
+      if (!response.data.success) {
+        setErrorMessage('Please Failed the Field');
+      }
+
+      Alert.alert("Success", response.data.message || "OTP sent successfully");
+      navigation.navigate("ResetPassword");
+    } 
+    catch (error) {
+      setErrorMessage('Email not exist');
     }
   };
-  
 
   return (
     <SafeAreaView style={styles.LP}>
@@ -57,6 +59,7 @@ const Forgot = ({ navigation }) => {
         <View style={styles.container}>
           <View style={styles.formContainer}>
             <Text style={styles.title}>Send Verification Code</Text>
+          {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
             <Text>Enter your email address.</Text>
             <TextInput
               style={styles.input}
@@ -89,7 +92,6 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
-
     justifyContent: "center",
     alignItems: "center",
   },
@@ -123,12 +125,20 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginVertical: 10,
   },
+
   button: {
     backgroundColor: Color.Primary,
     paddingVertical: 10,
     alignItems: "center",
     borderRadius: 8,
   },
+  errorMessage: {
+    color: 'red',
+    marginBottom: 10,
+    alignSelf: 'center',
+    justifyContent: 'center',
+
+  }
 });
 
 export default Forgot;

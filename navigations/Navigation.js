@@ -76,7 +76,6 @@ const Navigation = () => {
       {userToken ? (
             <>
         <Stack.Screen name="Home" component={BottomTab} options={{ headerShown: false }} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false }} />
         <Stack.Screen name="Profile" component={Profile} options={{headerTransparent: true}} />
         <Stack.Screen name="ChangePassword" component={ChangePassword} options={{headerTransparent: true}} />
         <Stack.Screen name="ChangeName" component={ChangeName} options={{headerTransparent: true}} />
@@ -92,6 +91,7 @@ const Navigation = () => {
 ) : (
   <>
         <Stack.Screen name="GetStart" component={GetStart} options={{ headerShown: false }} />
+        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false }} />
         <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
         <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
         <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />

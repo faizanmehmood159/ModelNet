@@ -1,26 +1,40 @@
-import React from 'react';
-import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert, SafeAreaView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useNavigation } from "@react-navigation/native";
 import Color from '../../constants/Colors';
 
 const ResetPassword = ({ navigation }) => {
   const [otp, setOtp] = useState('');
-  const [newPassword, setNewPassword] = useState('');
+  const [password, setpassword] = useState('');
+  const [cpassword, setcpassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+
 
   const resetPassword = async () => {
     try {
-      const response = await fetch('Yhttp://192.168.1.4:3000/api/v1/auth/resetPassword', {
+      if (!otp || !password || !cpassword) {
+        setErrorMessage('Please fill in all fields.');
+        return;
+      }
+
+
+      if (password !== cpassword) {
+        setErrorMessage('Passwords do not match.');
+
+        return;
+      }
+  
+      const response = await fetch('http://192.168.1.4:8000/api/v1/auth/forgetPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ otp, newPassword }),
+        body: JSON.stringify({ otp, password, cPassword: cpassword }), // Include cPassword in the request body
       });
-
+  
       if (response.ok) {
-        Alert.alert('Success', 'Password reset successfully');
+        const responseData = await response.json();
+        Alert.alert('Success', responseData.message);
         navigation.navigate('Login');
       } else {
         const errorData = await response.json();
@@ -31,39 +45,48 @@ const ResetPassword = ({ navigation }) => {
     }
   };
   
-    return (
-      <SafeAreaView style={styles.LP}>
-        <LinearGradient colors={['#EAECC6', '#E7E9BB', '#2BC0E4']} style={styles.gradient}>
-          <View style={styles.container}>
-            <View style={styles.formContainer}>
-              <Text style={styles.title}>Reset Your Password</Text>
-              <Text>Enter your code here</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="Enter your OTP"
-            keyboardType="numeric"
-            value={otp}
-            onChangeText={setOtp}
-              />
-              <Text>New Password</Text>
-              <TextInput
-                style={styles.input}
-                placeholder="New Password"
-                secureTextEntry={true}
-                value={newPassword}
-                onChangeText={setNewPassword}
-              />
-             
-              <TouchableOpacity style={styles.button} onPress={resetPassword}>
-                <Text style={{ color: '#fff' }}>Send</Text>
-              </TouchableOpacity>
-            </View>
+
+  return (
+    <SafeAreaView style={styles.LP}>
+      <LinearGradient colors={['#EAECC6', '#E7E9BB', '#2BC0E4']} style={styles.gradient}>
+        <View style={styles.container}>
+          <View style={styles.formContainer}>
+            <Text style={styles.title}>Reset Your Password</Text>
+          {errorMessage ? <Text style={styles.errorMessage}>{errorMessage}</Text> : null}
+
+            <Text>Enter your code here</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Enter your OTP"
+              keyboardType="numeric"
+              value={otp}
+              onChangeText={setOtp}
+            />
+            <Text>New Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="New Password"
+              secureTextEntry={true}
+              value={password}
+              onChangeText={setpassword}
+            />
+            <Text>Confirm Password</Text>
+            <TextInput
+              style={styles.input}
+              placeholder="Confirm Password"
+              secureTextEntry={true}
+              value={cpassword}
+              onChangeText={setcpassword}
+            />
+            <TouchableOpacity style={styles.button} onPress={resetPassword}>
+              <Text style={{ color: '#fff' }}>Send</Text>
+            </TouchableOpacity>
           </View>
-        </LinearGradient>
-      </SafeAreaView>
-    );
-  };
-  
+        </View>
+      </LinearGradient>
+    </SafeAreaView>
+  );
+};
 
 const styles = StyleSheet.create({
   LP: {
@@ -110,20 +133,19 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
 
-  resend:{
-    flexDirection:'row',
-    paddingBottom:10
-  },
-  resendtext:{
-    color: 'red'
-  },
-
   button: {
     backgroundColor: Color.Primary,
     paddingVertical: 10,
     alignItems: 'center',
     borderRadius: 8,
   },
+  errorMessage: {
+    color: 'red',
+    marginBottom: 10,
+    alignSelf: 'center',
+    justifyContent: 'center',
+
+  }
 });
 
 export default ResetPassword;
