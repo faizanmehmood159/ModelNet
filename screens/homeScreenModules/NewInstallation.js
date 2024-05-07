@@ -45,7 +45,7 @@ const NewInstallation = () => {
         address: address,
       };
       const response = await axios.post(
-        "http://192.168.1.4:8000/api/v1/auth/installationForm",
+        "http://192.168.1.13:8000/api/v1/auth/installationForm",
         data,
         {
           headers: {

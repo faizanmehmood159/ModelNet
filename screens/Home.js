@@ -10,21 +10,21 @@ const Home = ({ navigation, route }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [userName, setUserName] = useState('');
   
-   useEffect(() => {
+  useEffect(() => {
     fetchUserName();
   }, []);
 
   const fetchUserName = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.1.4:8000/api/v1/auth/getLoggedInUserName', {
+      const response = await axios.get('http://192.168.1.13:8000/api/v1/auth/getLoggedInUserName', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
 
       if (response.data.success) {
-        setUserName(response.data.name);
+        setUserName(response.data.data.name); // Set the user's name
       } else {
         console.error('Failed to fetch user name:', response.data.errorMessage);
       }
