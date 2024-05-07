@@ -7,11 +7,11 @@ import {
   TouchableOpacity,
   TextInput,
   ScrollView,
+  Dimensions,
 } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { WebView } from 'react-native-webview';
-
 
 const CustomerSupport = () => {
   const [message, setMessage] = useState("");
@@ -25,16 +25,18 @@ const CustomerSupport = () => {
   };
 
   return (
-    <LinearGradient
-      colors={["#EAECC6", "#E7E9BB", "#2BC0E4"]}
-      style={styles.gradient}
-    >
-      <Text>
-      This is customrt support
-      </Text>
-    </LinearGradient>
+      <SafeAreaView style={styles.container}>
+        <View style={styles.webviewContainer}>
+          <WebView
+            style={styles.webview}
+            source={{ uri: 'https://tawk.to/chat/6639f2b09a809f19fb2e3bdf/1ht95o1h3' }}
+          />
+        </View>
+      </SafeAreaView>
   );
 };
+
+const { width, height } = Dimensions.get("window");
 
 const styles = StyleSheet.create({
   gradient: {
@@ -43,56 +45,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginTop: 60,
-    alignSelf:"center"
-  },
- 
-  titleText: {
-    fontSize: 25,
-    fontWeight: "bold",
-    marginLeft: 10,
-  },
-  messagesContainer: {
+  webviewContainer: {
     flex: 1,
+    borderWidth: 1,
+    justifyContent: "center",
+    borderColor: "#ccc",
+    overflow: "hidden",
   },
-  messagesContentContainer: {
-    paddingVertical: 20,
-    paddingHorizontal: 10,
-  },
-  messageBubble: {
-    maxWidth: "70%",
-    padding: 10,
-    borderRadius: 10,
-    marginBottom: 10,
-  },
-  messageText: {
-    fontSize: 16,
-  },
-  inputContainer: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 20,
-    paddingBottom: 20,
-  },
-  input: {
+  webview: {
     flex: 1,
-    borderWidth:1,
-    padding: 10,
-    borderRadius: 5,
-    marginRight: 10,
-  },
-  sendButton: {
-    backgroundColor: "black",
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 5,
-  },
-  sendButtonText: {
-    color: "white",
-    fontWeight: "bold",
   },
 });
 

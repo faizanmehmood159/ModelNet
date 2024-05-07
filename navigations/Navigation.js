@@ -85,7 +85,7 @@ const Navigation = () => {
         <Stack.Screen name="AIChatbot" component={AIChatbot} options={{headerTransparent: true}} />
         <Stack.Screen name="NewInstallation" component={NewInstallation} options={{headerTransparent: true}} />
         <Stack.Screen name="RegisterComplaint" component={RegisterComplaint}  options={{headerTransparent: true}} />
-        <Stack.Screen name="CustomerSupport" component={CustomerSupport}  options={{headerTransparent: true}} />
+        <Stack.Screen name="CustomerSupport" component={CustomerSupport}  options={{headerShown: false}} />
         <Stack.Screen name="BillsandReceipt" component={BillsandReceipt }  options={{headerTransparent: true}} />
         <Stack.Screen name="Register" component={RegisterComplaint}  options={{headerTransparent: true}} />
 </> 
