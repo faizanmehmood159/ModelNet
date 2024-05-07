@@ -1,210 +1,97 @@
-import React from "react";
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
-import {
-  StyleSheet,
-  View,
-  SafeAreaView,
-  ScrollView,
-  Text,
-  Button,
-} from "react-native";
-import Color from "../../constants/Colors";
-import { LinearGradient } from "expo-linear-gradient";
-import { TouchableOpacity } from "react-native-gesture-handler";
-
-const BillsScreen = () => (
-  <LinearGradient
-    colors={["#EAECC6", "#E7E9BB", "#2BC0E4"]}
-    style={styles.gradient}
-  >
-    <SafeAreaView style={styles.safeAreaView}>
-      <ScrollView style={styles.container}>
-        <View style={styles.header}>
-          <Text style={styles.title}>ModelNet Bill</Text>
-          <Text style={styles.subtitle}>Your Trusted Broadband Partner</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Account Information</Text>
-          <Text>Account Number: 987654321</Text>
-          <Text>Customer Name: User</Text>
-          <Text>Address: Your Address, City</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Bill Details</Text>
-          <Text>Bill Month: February 2024</Text>
-          <Text>Due Date: February 15, 2024</Text>
-          <Text>Total Amount: $60.00</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>Package Details</Text>
-          <Text>Package Name: ModelNet Smart </Text>
-          <Text>Speed: 50 Mbps</Text>
-        </View>
-
-        <TouchableOpacity style={styles.submitButton}>
-          <Text style={styles.submitButtonText}>Pay Bill</Text>
-        </TouchableOpacity>
-
-        <View style={styles.footer}>
-          <Text style={styles.footerText}>
-            Thank you for choosing ModelNet!
-          </Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
-  </LinearGradient>
-);
-
-const ReceiptScreen = () => (
-  <LinearGradient
-    colors={["#EAECC6", "#E7E9BB", "#2BC0E4"]}
-    style={styles.gradient}
-  >
-    <SafeAreaView style={styles.safeAreaView}>
-    <ScrollView style={styles.container}>
-      <View style={styles.header}>
-        <Text style={styles.title}>Receipt</Text>
-        <Text style={styles.subtitle}>Thank you for your payment!</Text>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Transaction Information</Text>
-        <Text>Transaction ID: 123456789</Text>
-        <Text>Date: February 15, 2024</Text>
-        <Text>Amount Paid: 2000.00</Text>
-      </View>
-
-      
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Summary</Text>
-        <Text>Duration: 1 Month</Text>
-        <Text>Speed: 10 Mbps</Text>
-      </View>
-
-      
-    </ScrollView>
-    </SafeAreaView>
-  </LinearGradient>
-);
-
-const Tab = createMaterialTopTabNavigator();
+import React, { useState } from 'react';
+import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import stripe from '@stripe/stripe-react-native';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const BillsandReceipt = () => {
-  return (
-    <LinearGradient
-      colors={["#EAECC6", "#E7E9BB", "#2BC0E4"]}
-      style={styles.gradient}
-    >
-      <SafeAreaView style={styles.safeAreaView}>
-        <ScrollView contentContainerStyle={styles.scrollViewContent}>
-         
-<Tab.Navigator
-  screenOptions={{
-    tabBarIndicatorStyle: { backgroundColor: "black" },
-    tabBarStyle: {
-      marginTop: 28,
-      height: 60,
-      backgroundColor: "transparent",
-    },
-    tabBarLabelStyle: { fontSize: 20, fontWeight: "bold" },
-  }}
->
-  <Tab.Screen name="Bills" component={BillsScreen} />
-  <Tab.Screen name="Receipt" component={ReceiptScreen} />
-</Tab.Navigator>
+  const [amount, setAmount] = useState('');
+  const [description, setDescription] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [expMonth, setExpMonth] = useState('');
+  const [expYear, setExpYear] = useState('');
+  const [cvc, setCvc] = useState('');
 
-        </ScrollView>
-      </SafeAreaView>
-    </LinearGradient>
+  const handlePayment = async () => {
+    const token = await AsyncStorage.getItem("userToken");
+    try {
+      const { tokenId } = await stripe.createToken({
+        card: {
+          number: cardNumber,
+          expMonth: parseInt(expMonth),
+          expYear: parseInt(expYear),
+          cvc,
+        },
+      });
+      
+      const response = await fetch('http://192.168.1.13/api/v1/auth/payment', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          amount: parseInt(amount) * 100, // Stripe requires amount in cents
+          description: description,
+          token: tokenId,
+        }),
+      });
+  
+      const data = await response.json();
+      console.log(data);
+      // Handle success or failure based on the response from the backend
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  
+  return (
+    <View style= {styles.container}>
+      <Text>Amount:</Text>
+      <TextInput value={amount} onChangeText={setAmount} />
+      <Text>Description:</Text>
+      <TextInput value={description} onChangeText={setDescription} />
+      <Text>Card Number:</Text>
+      <TextInput value={cardNumber} onChangeText={setCardNumber} />
+      <Text>Expiration Month:</Text>
+      <TextInput value={expMonth} onChangeText={setExpMonth} />
+      <Text>Expiration Year:</Text>
+      <TextInput value={expYear} onChangeText={setExpYear} />
+      <Text>CVC:</Text>
+      <TextInput value={cvc} onChangeText={setCvc} />
+      <Button title="Pay" onPress={handlePayment} />
+    </View>
   );
 };
 
+export default BillsandReceipt;
+
 const styles = StyleSheet.create({
-  gradient: {
-    flex: 1,
-  },
-
-  safeAreaView: {
-    flex: 1,
-  },
-
   container: {
     flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
+    backgroundColor: '#fff',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
-  tabText: {
+  input: {
+    height: 40,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  button: {
+    alignItems: "center",
+    backgroundColor: "#DDDDDD",
+    padding: 10,
+  },
+  text: {
     fontSize: 20,
     fontWeight: "bold",
-    padding: 20,
   },
-
-  scrollViewContent: {
-    marginTop: 50,
-    flexGrow: 1,
-  },
-
-  container: {
-    padding: 20,
-  },
-  header: {
-    alignItems: "center",
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 28,
+  text1: {
+    fontSize: 20,
     fontWeight: "bold",
-    color: "#333333",
-    marginBottom: 10,
+    color: "red",
   },
-  subtitle: {
-    fontSize: 16,
-    color: "#555555",
-  },
-  section: {
-    marginBottom: 20,
-    backgroundColor: "white",
-    padding: 15,
-    borderRadius: 8,
-    elevation: 2,
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginBottom: 10,
-    color: "#333333",
-  },
+  
 
-  submitButton: {
-    backgroundColor: Color.Primary,
-    paddingTop: 10,
-    borderRadius: 5,
-    paddingVertical: 15,
-    alignItems: "center",
-    width: 230,
-    alignSelf: "center",
-  },
-
-  submitButtonText: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-
-  footer: {
-    marginTop: 70,
-    borderTopWidth: 1,
-    paddingTop: 5,
-    alignItems: "center",
-  },
-  footerText: {
-    color: "#555555",
-    fontSize: 16,
-    fontStyle: "italic",
-  },
-});
-
-export default BillsandReceipt;
+})
