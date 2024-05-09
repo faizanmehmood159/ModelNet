@@ -23,7 +23,7 @@ const BillsandReceipt = () => {
         },
       });
       
-      const response = await fetch('http://192.168.1.13/api/v1/auth/payment', {
+      const response = await fetch('http://192.168.1.9/api/v1/auth/payment', {
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
