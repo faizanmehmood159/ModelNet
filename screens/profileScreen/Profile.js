@@ -44,7 +44,7 @@ const Profile = ({ navigation }) => {
       formData.append('image', base64Image);
       const token = await AsyncStorage.getItem("userToken");
 
-      const response = await axios.post('http://192.168.1.9:8000/api/v1/auth/upload', formData, {
+      const response = await axios.post('http://192.168.1.3:8000/api/v1/auth/upload', formData, {
         headers: {
           Authorization: `Bearer ${token}`, // Include bearer token
         },
