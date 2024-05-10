@@ -16,6 +16,7 @@ import Title from "../components/Title";
 import { useGlobalLoader } from "../components/loader/GlobalLoaderProvider";
 import axios from "axios";
 import { AuthContext } from "../context/AuthContext"; 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Login = ({ navigation }) => {
   const { signIn } = useContext(AuthContext);
@@ -52,18 +53,22 @@ const Login = ({ navigation }) => {
         throw new Error("Email and password are required");
       }
       showLoader();
-
       const response = await axios.post("http://192.168.1.3:8000/api/v1/auth/signin", {
         email,
         password
       });
+      console.log(response.data)
+      if(response.data.success === true){
+        console.log(response.data.message)
+      }
 
-      const data = response.data;
-
-      if (data.success) {
-        showToast("Welcome.", ToastAndroid.SHORT);
+      if (response.data.success === true) {
+        const userData = response.data.data
+        const stringifyData = JSON.stringify(userData);
+        await AsyncStorage.setItem("userData",stringifyData);
+        console.log(response.data)
         signIn(response.data.data.token);
-        
+        showToast("Welcome.", ToastAndroid.SHORT);
       }
        else {
         if (data.description === "Incorrect password.") {
