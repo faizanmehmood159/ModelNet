@@ -14,6 +14,7 @@ import Color from "../../constants/Colors";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import RNPickerSelect from "react-native-picker-select";
 
 const NewInstallation = () => {
   const [name, setName] = useState("");
@@ -22,6 +23,14 @@ const NewInstallation = () => {
   const [cnic, setCnic] = useState("");
   const [address, setAddress] = useState("");
   const navigation = useNavigation();
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [selectedId, setSelectedId] = useState(null);
+
+  const packages = [
+    { id: 1, label: "6MB ", price: 1700 },
+    { id: 2, label: "10MB ", price: 2200 },
+    { id: 3, label: "15MB ", price: 2500 },
+  ];
 
   const handleInstallationFormSubmit = async () => {
     const token = await AsyncStorage.getItem("userToken");
@@ -31,19 +40,21 @@ const NewInstallation = () => {
         !email.trim() ||
         !phone_no.trim() ||
         !cnic.trim() ||
-        !address.trim()
+        !address.trim() 
       ) {
         Alert.alert("Validation Error", "All fields are required");
         return;
       }
-
+      const selectedPackageObj = packages.find(pkg => pkg.label === selectedPackage);
       const data = {
         name: name,
         email: email,
         phone_no: phone_no,
         cnic: cnic,
         address: address,
+        packages: selectedPackageObj,
       };
+
       const response = await axios.post(
         "http://192.168.1.3:8000/api/v1/auth/installationForm",
         data,
@@ -61,11 +72,14 @@ const NewInstallation = () => {
         setPhoneNo("");
         setCnic("");
         setAddress("");
-        navigation.navigate('Home');
+        setSelectedPackage(null);
+        navigation.navigate("Home");
       } else {
+        console.error("Error", "Failed to submit installation form", error);
         Alert.alert("Error", "Failed to submit installation form");
       }
     } catch (error) {
+      console.error("Error submitting installation form:", error);
       Alert.alert(
         "Error",
         "Failed to submit installation form. Please try again later."
@@ -129,6 +143,24 @@ const NewInstallation = () => {
                 keyboardType="numeric"
               />
             </View>
+            <View style={styles.selectedPackagecontainer}>
+              <Text style={styles.inputLabel}>Choose Packages:</Text>
+              <View style={styles.input}>
+                <RNPickerSelect
+                  onValueChange={(value, index) => {
+                    setSelectedPackage(value);
+                    setSelectedId(packages[index].id);
+                  }}
+                  items={packages.map((pkg) => ({
+                    label: pkg.label,
+                    value: pkg.label, // Set value property to match the label
+                  }))}
+                  placeholder={{ label: "Select a package...", value: null }}
+                  value={selectedPackage}
+                  style={styles.pickerSelect}
+                />
+              </View>
+            </View>
 
             {/* Address Input */}
             <View>
@@ -182,7 +214,6 @@ const styles = StyleSheet.create({
     fontSize: 25,
     fontWeight: "bold",
     marginBottom: 20,
-    textAlign: "center",
   },
 
   inputLabel: {
@@ -213,11 +244,33 @@ const styles = StyleSheet.create({
     alignItems: "center",
     width: 230,
     alignSelf: "center",
+    marginTop: 20, // Adjust this margin to provide space below the dropdown
   },
 
   submitButtonText: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
+  },
+
+  pickerSelect: {
+    fontSize: 16,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderWidth: 2,
+    borderColor: "black",
+    borderRadius: 10,
+    color: "black",
+    paddingRight: 30,
+    marginBottom: 12,
+
+    Packagecontainer: {
+      height: 50,
+      borderColor: "black",
+      borderWidth: 1,
+      borderRadius: 10,
+      padding: 10,
+      marginBottom: 12,
+    },
   },
 });

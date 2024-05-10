@@ -24,13 +24,13 @@ const Profile = ({ navigation }) => {
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
-      base64: true, // Add this option to get base64 representation of the selected image
+      base64: true,
     });
   
     if (!result.canceled) {
       if (result.assets && result.assets.length > 0) {
         setProfileImage(result.assets[0].uri);
-        setBase64Image(result.assets[0].base64); // Set the base64 representation of the selected image
+        setBase64Image(result.assets[0].base64); 
       } else {
         setProfileImage(result.uri);
         setBase64Image(result.base64); // Set the base64 representation of the selected image
