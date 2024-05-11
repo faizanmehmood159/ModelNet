@@ -36,7 +36,7 @@ const RegisterComponent = () => {
         complaint: complaint,
       };
       const response = await axios.post(
-        "http://192.168.1.3:8000/api/v1/auth/registerComplaint",
+        "http://192.168.1.8:8000/api/v1/auth/registerComplaint",
         data,
         {
           headers: {
@@ -72,7 +72,7 @@ const RegisterComponent = () => {
   //   }
 
   //   // Send complaint data to the backend
-  //   fetch('http://192.168.1.3:8000/api/v1/auth/registerComplaint', {
+  //   fetch('http://192.168.1.8:8000/api/v1/auth/registerComplaint', {
   //     method: 'POST',
   //     headers: {
   //       'Content-Type': 'application/json',

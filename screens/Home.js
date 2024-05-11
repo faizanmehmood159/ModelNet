@@ -17,7 +17,7 @@ const Home = ({ navigation, route }) => {
   const fetchUserName = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.1.3:8000/api/v1/auth/getLoggedInUserName', {
+      const response = await axios.get('http://192.168.1.8:8000/api/v1/auth/getLoggedInUserName', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
