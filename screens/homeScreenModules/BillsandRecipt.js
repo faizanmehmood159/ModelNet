@@ -1,7 +1,32 @@
-import React from 'react';
-import { StyleSheet, Text, View, ScrollView, Dimensions } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ScrollView, Dimensions, Button } from 'react-native';
+import { fetchBill } from '../../api/packages';
 
 const BillsandRecipt = () => {
+
+
+  useEffect(() => {
+    getBill();
+  }, []);
+  const getBill = async () => {
+    try {
+      const userdata = await AsyncStorage.getItem("userData");
+      const dataUser = JSON.parse(userdata);
+      const token = dataUser.token
+      const data = {
+        userId: dataUser.id,
+      }
+      const response = await fetchBill(data, token);
+      console.log(response)
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+
+ 
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <View style={styles.receipt}>
@@ -14,6 +39,7 @@ const BillsandRecipt = () => {
         <Text>Item 3 ........ $15</Text>
         <Text>--------------------------------</Text>
         <Text>Total: $45</Text>
+        <Button title="press me" onPress={getBill} />
       </View>
     </ScrollView>
   );

@@ -58,6 +58,7 @@ const Navigation = () => {
   const signOut = async () => {
     try {
       await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userData');
       setUserToken(null);
     } catch (error) {
     }

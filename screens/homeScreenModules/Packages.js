@@ -62,7 +62,7 @@ const Packages = () => {
       setToken(token);
     } catch (error) {}
   };
-  useEffect(() => {
+  useEffect(() => {  
     getToken();
   }, []);
 
