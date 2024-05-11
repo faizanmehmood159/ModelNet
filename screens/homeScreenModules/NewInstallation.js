@@ -14,7 +14,6 @@ import Color from "../../constants/Colors";
 import axios from "axios";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import RNPickerSelect from "react-native-picker-select";
 
 const NewInstallation = () => {
   const [name, setName] = useState("");
@@ -27,10 +26,16 @@ const NewInstallation = () => {
   const [selectedId, setSelectedId] = useState(null);
 
   const packages = [
-    { id: 1, label: "6MB ", price: 1700 },
-    { id: 2, label: "10MB ", price: 2200 },
-    { id: 3, label: "15MB ", price: 2500 },
+    { id: 1, label: "6MB", price: 1700 },
+    { id: 2, label: "10MB", price: 2200 },
+    { id: 3, label: "15MB", price: 2500 },
   ];
+
+  const handlePackageSelect = (pkgId) => {
+    setSelectedId(pkgId);
+    setSelectedPackage(packages.find((pkg) => pkg.id === pkgId));
+    console.log(selectedPackage);
+  };
 
   const handleInstallationFormSubmit = async () => {
     const token = await AsyncStorage.getItem("userToken");
@@ -45,15 +50,15 @@ const NewInstallation = () => {
         Alert.alert("Validation Error", "All fields are required");
         return;
       }
-      const selectedPackageObj = packages.find(pkg => pkg.label === selectedPackage);
       const data = {
         name: name,
         email: email,
         phone_no: phone_no,
         cnic: cnic,
         address: address,
-        packages: selectedPackageObj,
+        packages: selectedPackage,
       };
+      console.log(data)
 
       const response = await axios.post(
         "http://192.168.1.8:8000/api/v1/auth/installationForm",
@@ -143,22 +148,30 @@ const NewInstallation = () => {
                 keyboardType="numeric"
               />
             </View>
-            <View style={styles.selectedPackagecontainer}>
-              <Text style={styles.inputLabel}>Choose Packages:</Text>
-              <View style={styles.input}>
-                <RNPickerSelect
-                  onValueChange={(value, index) => {
-                    setSelectedPackage(value);
-                    setSelectedId(packages[index].id);
-                  }}
-                  items={packages.map((pkg) => ({
-                    label: pkg.label,
-                    value: pkg.label, // Set value property to match the label
-                  }))}
-                  placeholder={{ label: "Select a package...", value: null }}
-                  value={selectedPackage}
-                  style={styles.pickerSelect}
-                />
+
+            {/* Package Selection */}
+            <View style={styles.packageContainer}>
+              <Text style={styles.inputLabel}>Choose Package:</Text>
+              <View style={styles.radioContainer}>
+                {packages.map((pkg) => (
+                  <TouchableOpacity
+                    key={pkg.id}
+                    style={[
+                      styles.radio,
+                      selectedId === pkg.id && styles.radioSelected,
+                    ]}
+                    onPress={() => handlePackageSelect(pkg.id)}
+                  >
+                    <Text
+                      style={[
+                        styles.radioText,
+                        selectedId === pkg.id && styles.radioTextSelected,
+                      ]}
+                    >
+                      {pkg.label}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
               </View>
             </View>
 
@@ -205,7 +218,7 @@ const styles = StyleSheet.create({
   },
 
   container: {
-    marginTop: 100,
+    marginTop: 80,
     paddingHorizontal: 20,
   },
 
@@ -213,7 +226,7 @@ const styles = StyleSheet.create({
     textAlign: "center",
     fontSize: 25,
     fontWeight: "bold",
-    marginBottom: 20,
+    marginBottom: 10,
   },
 
   inputLabel: {
@@ -228,49 +241,52 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
-    marginBottom: 12,
+    marginBottom: 5,
   },
 
-  disabled: {
-    backgroundColor: "#f0f0f0",
-    color: "#888",
+  packageContainer: {
+    marginBottom: 10,
+  },
+
+  radioContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+
+  radio: {
+    borderWidth: 1,
+    borderColor: Color.Primary,
+    borderRadius: 20,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+  },
+
+  radioSelected: {
+    backgroundColor: Color.Primary,
+  },
+
+  radioText: {
+    color: Color.Primary,
+  },
+
+  radioTextSelected: {
+    color: "white",
   },
 
   submitButton: {
     backgroundColor: Color.Primary,
-    paddingTop: 10,
-    borderRadius: 5,
-    paddingVertical: 15,
+    justifyContent: "center",
+    paddingVertical: 10,
+    borderRadius: 10,
     alignItems: "center",
     width: 230,
     alignSelf: "center",
-    marginTop: 20, // Adjust this margin to provide space below the dropdown
+    marginVertical: 10,
   },
 
   submitButtonText: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-  },
-
-  pickerSelect: {
-    fontSize: 16,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-    borderWidth: 2,
-    borderColor: "black",
-    borderRadius: 10,
-    color: "black",
-    paddingRight: 30,
-    marginBottom: 12,
-
-    Packagecontainer: {
-      height: 50,
-      borderColor: "black",
-      borderWidth: 1,
-      borderRadius: 10,
-      padding: 10,
-      marginBottom: 12,
-    },
   },
 });
