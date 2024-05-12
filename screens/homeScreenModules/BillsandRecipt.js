@@ -1,97 +1,75 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import stripe from '@stripe/stripe-react-native';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ScrollView, Dimensions, Button } from 'react-native';
+import { fetchBill } from '../../api/packages';
 
-const BillsandReceipt = () => {
-  const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expMonth, setExpMonth] = useState('');
-  const [expYear, setExpYear] = useState('');
-  const [cvc, setCvc] = useState('');
+const BillsandRecipt = () => {
 
-  const handlePayment = async () => {
-    const token = await AsyncStorage.getItem("userToken");
+
+  useEffect(() => {
+    getBill();
+  }, []);
+  const getBill = async () => {
     try {
-      const { tokenId } = await stripe.createToken({
-        card: {
-          number: cardNumber,
-          expMonth: parseInt(expMonth),
-          expYear: parseInt(expYear),
-          cvc,
-        },
-      });
-      
-      const response = await fetch('http://192.168.1.9/api/v1/auth/payment', {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          amount: parseInt(amount) * 100, // Stripe requires amount in cents
-          description: description,
-          token: tokenId,
-        }),
-      });
-  
-      const data = await response.json();
-      console.log(data);
-      // Handle success or failure based on the response from the backend
+      const userdata = await AsyncStorage.getItem("userData");
+      const dataUser = JSON.parse(userdata);
+      const token = dataUser.token
+      const data = {
+        userId: dataUser.id,
+      }
+      const response = await fetchBill(data, token);
+      console.log(response)
     } catch (error) {
-      console.error(error);
+      console.log(error);
     }
   };
-  
-  return (
-    <View style= {styles.container}>
-      <Text>Amount:</Text>
-      <TextInput value={amount} onChangeText={setAmount} />
-      <Text>Description:</Text>
-      <TextInput value={description} onChangeText={setDescription} />
-      <Text>Card Number:</Text>
-      <TextInput value={cardNumber} onChangeText={setCardNumber} />
-      <Text>Expiration Month:</Text>
-      <TextInput value={expMonth} onChangeText={setExpMonth} />
-      <Text>Expiration Year:</Text>
-      <TextInput value={expYear} onChangeText={setExpYear} />
-      <Text>CVC:</Text>
-      <TextInput value={cvc} onChangeText={setCvc} />
-      <Button title="Pay" onPress={handlePayment} />
-    </View>
-  );
-};
 
-export default BillsandReceipt;
+
+ 
+
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      <View style={styles.receipt}>
+        <Text style={styles.heading}>Receipt</Text>
+        <Text>Date: May 10, 2024</Text>
+        <Text>Time: 10:00 AM</Text>
+        <Text>--------------------------------</Text>
+        <Text>Item 1 ........ $10</Text>
+        <Text>Item 2 ........ $20</Text>
+        <Text>Item 3 ........ $15</Text>
+        <Text>--------------------------------</Text>
+        <Text>Total: $45</Text>
+        <Button title="press me" onPress={getBill} />
+      </View>
+    </ScrollView>
+  );
+}
+
+export default BillsandRecipt;
+
+const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    flexGrow: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+  receipt: {
+    width: windowWidth - 40, // Adjust as needed
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 3, // for Android shadow
+    shadowColor: '#000', // for iOS shadow
+    shadowOffset: { width: 0, height: 2 }, // for iOS shadow
+    shadowOpacity: 0.25, // for iOS shadow
+    shadowRadius: 3.84, // for iOS shadow
   },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#DDDDDD",
-    padding: 10,
-  },
-  text: {
+  heading: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
-  text1: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "red",
-  },
-  
-
-})
+});
