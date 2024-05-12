@@ -57,15 +57,15 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   receipt: {
-    width: windowWidth - 40, // Adjust as needed
+    width: windowWidth - 40, 
     backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 10,
-    elevation: 3, // for Android shadow
-    shadowColor: '#000', // for iOS shadow
-    shadowOffset: { width: 0, height: 2 }, // for iOS shadow
-    shadowOpacity: 0.25, // for iOS shadow
-    shadowRadius: 3.84, // for iOS shadow
+    elevation: 3, 
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84, 
   },
   heading: {
     fontSize: 20,

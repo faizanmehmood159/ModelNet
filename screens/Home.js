@@ -9,15 +9,17 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Home = ({ navigation, route }) => {
   const [profileImage, setProfileImage] = useState(null);
   const [userName, setUserName] = useState('');
+  const [userId, setUserId] = useState(null);
   
   useEffect(() => {
     fetchUserName();
+    fetchUserId();
   }, []);
 
   const fetchUserName = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.1.8:8000/api/v1/auth/getLoggedInUserName', {
+      const response = await axios.get('http://192.168.100.5:8000/api/v1/auth/getLoggedInUserName', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -32,6 +34,50 @@ const Home = ({ navigation, route }) => {
       console.error('Error fetching user name:', error);
     }
   };
+
+
+
+
+  const fetchUserId = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId'); // Get user ID from AsyncStorage
+      setUserId(userId); // Set the user ID in the component's state
+    } catch (error) {
+      console.error('Error fetching user ID:', error);
+    }
+  };
+
+  const fetchUserData = async () => {
+    try {
+      if (!userId) {
+        console.error('User ID not found');
+        return;
+      }
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await axios.get('http://192.168.100.5:8000/api/v1/auth/getImage', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        params: {
+          userId: userId, // Pass the user ID as a query parameter
+        },
+      });
+
+      if (response.data.success) {
+        setProfileImage(response.data.imageUrl); // Set the profile image URL
+      } else {
+        console.error('Failed to fetch user data:', response.data.errorMessage);
+      }
+    } catch (error) {
+      console.error('Error fetching user data:', error);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData();
+  }, [userId]);
+
+  
   const data = [
     { id: '1', image: require('../assets/offers1.png'), },
     { id: '2', image: require('../assets/offers.png'),  },
@@ -51,15 +97,14 @@ const Home = ({ navigation, route }) => {
           <View style={styles.grid1}>
             <View style={styles.profiletab}> 
               <TouchableOpacity onPress ={()=> navigation.navigate(Profile)} >
-                <View style={styles.profile}>
-              {profileImage ? (
-                <Image source={{ uri: profileImage }} style={styles.profileImage} />
-              ) : (
-                <Image source={{ uri: 'https://cdn-icons-png.flaticon.com/128/8483/8483624.png' }} style={styles.profileImage} />
-              )}
-            
-                </View>
-              </TouchableOpacity>
+    <View style={styles.profile}>
+      {profileImage ? (
+        <Image source={{ uri: profileImage }} style={styles.profileImage} />
+      ) : (
+        <Image source={require('../assets/profile.png')} style={styles.profileImage} />
+      )}
+    </View>
+  </TouchableOpacity>
               <View style={styles.detail}>
                 <Text style={styles.detailtext1}>{userName}</Text>
               </View>
