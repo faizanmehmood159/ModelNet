@@ -1,62 +1,75 @@
-import React, { useContext, useState } from "react";
-import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from "react-native";
-import * as ImagePicker from 'expo-image-picker'; 
+import React, { useContext, useState, useEffect } from "react";
+import { View, Text, Image, StyleSheet, SafeAreaView, TouchableOpacity, Alert } from "react-native"; 
 import { LinearGradient } from "expo-linear-gradient";
-import axios from 'axios';
 import { AuthContext } from "../../context/AuthContext";
+import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const Profile = ({ navigation }) => {
+  const { signOut } = useContext(AuthContext);
   const [profileImage, setProfileImage] = useState(null);
-  const [base64Image, setBase64Image] = useState(null);
-  const { signOut, token } = useContext(AuthContext); // Assuming you have a token in your AuthContext
+  const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [userId, setUserId] = useState(null); // State variable for userId
 
-  const selectProfileImage = async () => {
-    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') {
-      Alert.alert('Permission needed', 'Please grant permission to access the photo library to set profile picture.');
-      return;
-    }
-  
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-      base64: true,
-    });
-  
-    if (!result.canceled) {
-      if (result.assets && result.assets.length > 0) {
-        setProfileImage(result.assets[0].uri);
-        setBase64Image(result.assets[0].base64); 
-      } else {
-        setProfileImage(result.uri);
-        setBase64Image(result.base64); // Set the base64 representation of the selected image
-      }
+  const getToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const data = await AsyncStorage.getItem("userData");
+
+      const userData = JSON.parse(data);
+      setUserData(userData);
+      setToken(token);
+      setUserId(userData.id); 
+    } catch (error) {
+      console.error("Error retrieving token and user ID:", error);
     }
   };
 
-  const uploadProfileImage = async () => {
-    try {
-      const formData = new FormData();
-      formData.append('image', base64Image);
-      const token = await AsyncStorage.getItem("userToken");
+  useEffect(() => {  
+    getToken();
+  }, []);
 
-      const response = await axios.post('http://192.168.1.8:8000/api/v1/auth/upload', formData, {
-        headers: {
-          Authorization: `Bearer ${token}`, // Include bearer token
-        },
+  const handleImageUpload = async () => {
+    try {
+      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (!permissionResult.granted) {
+        Alert.alert("Permission Denied", "Please allow access to the camera roll to upload an image.");
+        return;
+      }
+
+      const pickerResult = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [1, 1],
+        quality: 1,
       });
 
-      if (response.status === 200) {
-        Alert.alert('Success', 'Profile image uploaded successfully!');
-      } else {
-        throw new Error('Failed to upload profile image');
+      if (!pickerResult.canceled) {
+        const formData = new FormData();
+        formData.append('profileImage', { 
+          uri: pickerResult.uri,
+          name: `profile_image_${Date.now()}.jpg`,
+          type: 'image/jpeg',
+        });
+
+        console.log("Image data:", formData); // Log the image data before sending
+        
+        const response = await axios.post(`http://192.168.100.5:8000/api/v1/auth/upload/?userId=${userId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+            Authorization: `Bearer ${token}`, 
+          },
+        });
+        
+        // Set the uploaded image URL to display
+        setProfileImage(response.data.image.imageUrl);
       }
     } catch (error) {
-      Alert.alert('Error', error.message);
+      console.error("Error uploading image:", error);
+      Alert.alert("Upload Failed", "An error occurred while uploading the image.");
     }
   };
 
@@ -72,17 +85,17 @@ const Profile = ({ navigation }) => {
       <SafeAreaView style={styles.safeAreaView}>
         <View style={styles.container}>
           <View style={styles.imageContainer}>
-            <TouchableOpacity onPress={selectProfileImage}>
+            {profileImage ? (
+              <Image source={{ uri: profileImage }} style={styles.profileImage} />
+            ) : (
               <View style={styles.profileBackground}>
-                {profileImage ? (
-                  <Image source={{ uri: profileImage }} style={styles.profileImage} />
-                ) : (
-                  <Text style={styles.uploadText}>Select Profile Image</Text>
-                )}
+                <Text style={styles.uploadText}>Upload Profile Image</Text>
               </View>
+            )}
+            <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
+              <Text style={styles.uploadButtonText}>Upload Image</Text>
             </TouchableOpacity>
           </View>
-        
           <View style={styles.textContainer}>
             <TouchableOpacity onPress={() => navigation.navigate("ChangeName")}>
               <Text style={styles.text}>Change Name</Text>
@@ -103,13 +116,6 @@ const Profile = ({ navigation }) => {
               <Text style={styles.text}>Logout</Text>
             </TouchableOpacity>
           </View>
-          {profileImage && (
-            <TouchableOpacity onPress={uploadProfileImage}>
-              <View style={styles.textContainer}>
-                <Text style={styles.text}>Upload Profile</Text>
-              </View>
-            </TouchableOpacity>
-          )}
         </View>
       </SafeAreaView>
     </LinearGradient>
@@ -148,12 +154,22 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     borderRadius: 75,
-    borderWidth: 5,
   },
   uploadText: {
     fontSize: 18,
     color: "black",
     marginTop: 20,
+  },
+  uploadButton: {
+    backgroundColor: "#2BC0E4",
+    paddingVertical: 10,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginTop: 20,
+  },
+  uploadButtonText: {
+    fontSize: 18,
+    color: "white",
   },
   textContainer: {
     borderBottomWidth: 2,

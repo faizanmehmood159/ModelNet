@@ -1,27 +1,38 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, Dimensions, ActivityIndicator } from 'react-native';
-import { fetchBill } from '../../api/packages';
+import { StyleSheet, Text, View, ScrollView, Dimensions, Button, ActivityIndicator } from 'react-native';
+
 
 const BillsandRecipt = () => {
-  const [bill, setBill] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getBill();
+    getBills();
   }, []);
 
-  const getBill = async () => {
+  const getBills = async () => {
     try {
-      const userdata = await AsyncStorage.getItem("userData");
-      const dataUser = JSON.parse(userdata);
-      const token = dataUser.token;
-      const _id = dataUser.id;
-      const response = await fetchBill(_id, token);
-      setBill(response.data.data.bill.packages);
-      setLoading(false);
+      setLoading(true);
+      const userData = await AsyncStorage.getItem("userData");
+      const { token, id } = JSON.parse(userData);
+      console.log(token,id);
+      const response = await fetch(`http://192.168.100.5:8000/api/v1/auth/allBills`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setBills(data.paidBills);
+      } else {
+        setError(data.message || 'Failed to fetch bills');
+      }
     } catch (error) {
-      console.log(error);
+      setError(error.message || 'An error occurred while fetching bills');
+    } finally {
       setLoading(false);
     }
   };
@@ -29,31 +40,28 @@ const BillsandRecipt = () => {
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-        </View>
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : error ? (
+        <Text>Error: {error}</Text>
       ) : (
-        <View style={styles.receipt}>
-          <View style={styles.headingContainer}>
-            <Text style={styles.heading}>Bill</Text>
-            <Text style={[styles.status, bill?.status === 'Paid' && styles.paidStatus]}>
-              {bill?.status}
-            </Text>
-          </View>
-          <View style={styles.divider}></View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.label}>Package:</Text>
-            <Text style={styles.value}>{bill?.label}</Text>
-          </View>
-          <View style={styles.detailContainer}>
-            <Text style={styles.label}>Price:</Text>
-            <Text style={styles.value}>${bill?.price}</Text>
-          </View>
-        </View>
+        <>
+          {bills && bills.length > 0 ? (
+            bills.map((bill, index) => (
+              <View key={index} style={styles.receipt}>
+                <Text style={styles.heading}>Receipt</Text>
+                <Text>Date: {bill.date}</Text>
+              </View>
+            ))
+          ) : (
+            <Text>No bills found</Text>
+          )}
+        </>
       )}
+      <Button title="Refresh" onPress={getBills} />
     </ScrollView>
   );
 };
+
 
 export default BillsandRecipt;
 
@@ -72,15 +80,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   receipt: {
-    width: windowWidth - 40,
+    width: windowWidth - 40, 
     backgroundColor: '#ffffff',
     padding: 20,
     borderRadius: 10,
-    elevation: 3,
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    elevation: 3, 
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
     shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    shadowRadius: 3.84, 
+    marginBottom: 20,
   },
   heading: {
     fontSize: 20,
