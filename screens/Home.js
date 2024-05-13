@@ -7,7 +7,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = ({ navigation, route }) => {
-  const [profileImage, setProfileImage] = useState(null);
+  // const [profileImage, setProfileImage] = useState(null);
   const [userName, setUserName] = useState('');
   const [userId, setUserId] = useState(null);
   
@@ -35,6 +35,7 @@ const Home = ({ navigation, route }) => {
     }
   };
 
+  const profileImage = userName ? userName.charAt(0).toUpperCase() : ''; // Get the first letter of the user's name
 
 
 
@@ -47,35 +48,35 @@ const Home = ({ navigation, route }) => {
     }
   };
 
-  const fetchUserData = async () => {
-    try {
-      if (!userId) {
-        console.error('User ID not found');
-        return;
-      }
-      const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.1.3:8000/api/v1/auth/getImage', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          userId: userId, // Pass the user ID as a query parameter
-        },
-      });
+  // const fetchUserData = async () => {
+  //   try {
+  //     if (!userId) {
+  //       console.error('User ID not found');
+  //       return;
+  //     }
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const response = await axios.get('http://192.168.1.3:8000/api/v1/auth/getImage', {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       params: {
+  //         userId: userId, // Pass the user ID as a query parameter
+  //       },
+  //     });
 
-      if (response.data.success) {
-        setProfileImage(response.data.imageUrl); // Set the profile image URL
-      } else {
-        console.error('Failed to fetch user data:', response.data.errorMessage);
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
+  //     if (response.data.success) {
+  //       setProfileImage(response.data.imageUrl); // Set the profile image URL
+  //     } else {
+  //       console.error('Failed to fetch user data:', response.data.errorMessage);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching user data:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUserData();
-  }, [userId]);
+  // useEffect(() => {
+  //   fetchUserData();
+  // }, [userId]);
 
   
   const data = [
@@ -96,15 +97,11 @@ const Home = ({ navigation, route }) => {
         <ScrollView style={styles.scrollView}>
           <View style={styles.grid1}>
             <View style={styles.profiletab}> 
-              <TouchableOpacity onPress ={()=> navigation.navigate(Profile)} >
-    <View style={styles.profile}>
-      {profileImage ? (
-        <Image source={{ uri: profileImage }} style={styles.profileImage} />
-      ) : (
-        <Image source={require('../assets/profile.png')} style={styles.profileImage} />
-      )}
-    </View>
-  </TouchableOpacity>
+            <TouchableOpacity onPress ={()=> navigation.navigate(Profile)} >
+                <View style={styles.profile}>
+                  <Text style={styles.profileText}>{profileImage}</Text>
+                </View>
+              </TouchableOpacity>
               <View style={styles.detail}>
                 <Text style={styles.detailtext1}>{userName}</Text>
               </View>
@@ -221,7 +218,7 @@ const styles = StyleSheet.create({
   },
 
   profile: {
-    backgroundColor: 'black',
+    backgroundColor: '#00AED1',
     width: 50,
     height: 50,
     borderWidth: 1,
@@ -349,6 +346,11 @@ const styles = StyleSheet.create({
     shadowColor: 'black',
     shadowRadius: 10,
     elevation: 5,
+  },
+  profileText: {
+    color: 'white',
+    fontSize: 24,
+    fontWeight: 'bold',
   },
   profileImage: {
     width: 48,
