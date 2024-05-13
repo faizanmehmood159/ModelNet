@@ -7,6 +7,7 @@ import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Profile = ({ navigation }) => {
+<<<<<<< HEAD
   const { signOut, userToken } = useContext(AuthContext);
   const [profileImage, setProfileImage] = useState(null);
 
@@ -16,6 +17,46 @@ const Profile = ({ navigation }) => {
 
   const getProfileImage = async () => {
     // Fetch profile image from AsyncStorage or your database
+=======
+
+  const [userName, setUserName] = useState('');
+  
+  useEffect(() => {
+    fetchUserName();
+  }, []);
+
+  const fetchUserName = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await axios.get('http://192.168.1.3:8000/api/v1/auth/getLoggedInUserName', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        setUserName(response.data.data.name); // Set the user's name
+      } else {
+        console.error('Failed to fetch user name:', response.data.errorMessage);
+      }
+    } catch (error) {
+      console.error('Error fetching user name:', error);
+    }
+  };
+
+  const profileImage = userName ? userName.charAt(0).toUpperCase() : ''; // Get the first letter of the user's name
+
+
+
+
+  const { signOut } = useContext(AuthContext);
+  // const [profileImage, setProfileImage] = useState(null);
+  const [token, setToken] = useState(null);
+  const [userData, setUserData] = useState(null);
+  const [userId, setUserId] = useState(null); // State variable for userId
+console.log(userData)
+  const getToken = async () => {
+>>>>>>> 8bad7dd317d799d62602f9695c481758418597c0
     try {
       const imageUri = await AsyncStorage.getItem('profileImage');
       if (imageUri) {
@@ -99,6 +140,7 @@ const Profile = ({ navigation }) => {
       <SafeAreaView style={styles.safeAreaView}>
         <View style={styles.container}>
           <View style={styles.imageContainer}>
+<<<<<<< HEAD
             {profileImage ? (
               <TouchableOpacity onPress={handleChoosePhoto}>
                 <Image source={{ uri: profileImage }} style={styles.profileImage} />
@@ -108,6 +150,10 @@ const Profile = ({ navigation }) => {
                 <Text style={styles.uploadText}>Upload Profile Picture</Text>
               </TouchableOpacity>
             )}
+=======
+                  <Text style={styles.profileText}>{profileImage}</Text>
+               
+>>>>>>> 8bad7dd317d799d62602f9695c481758418597c0
           </View>
           <TouchableOpacity onPress={handleChoosePhoto} style={styles.uploadButton}>
             <Text style={styles.uploadButtonText}>Choose Photo</Text>
@@ -156,22 +202,33 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: "center",
+    justifyContent: "center",
     marginTop: -80,
+    backgroundColor: "#00AED1",
+    height: 100,
+    width: 100,
+    borderRadius: 100,
   },
   profileBackground: {
     alignItems: "center", 
     justifyContent: "center",
-    width: 150,
-    height: 150,
+    width: 100,
+    height: 100,
     borderRadius: 100,
     borderWidth: 4,
     borderColor: 'white',
     overflow: "hidden",
   },
+  profileText: {
+    color: 'white',
+    fontSize: 40,
+    fontWeight: 'bold',
+  },
   profileImage: {
-    width: 150,
-    height: 150,
+    width: 48,
+    height: 48,
     borderRadius: 75,
+    borderWidth: 5,
   },
   uploadText: {
     fontSize: 18,

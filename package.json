@@ -58,8 +58,7 @@
     "react-native-webview": "13.8.6",
     "react-reconciler": "^0.29.0",
     "url-encode-decode": "^1.0.0",
-    "expo-updates": "~0.25.11",
-    "expo": "^51.0.0"
+    "expo-file-system": "~17.0.1"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",
