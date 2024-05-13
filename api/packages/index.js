@@ -15,11 +15,9 @@ export const buyPackage = async (data, token) => {
   }
 };
 
-export const fetchBill = async (data, token) => {
-  console.log(token)
-  console.log(data)
+export const fetchBill = async (_id, token) => {
   try {
-    const response = await axios.get("http://192.168.1.8:8000/api/v1/auth/getBill", data,{
+    const response = await axios.get(`http://192.168.1.8:8000/api/v1/auth/getBill?_id=${_id}`,{
       headers: {
         Authorization: `Bearer ${token}`
       }
