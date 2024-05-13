@@ -53,7 +53,7 @@ const Login = ({ navigation }) => {
         throw new Error("Email and password are required");
       }
       showLoader();
-      const response = await axios.post("http://192.168.1.3:8000/api/v1/auth/signin", {
+      const response = await axios.post("http://192.168.38.237:8000/api/v1/auth/signin", {
         email,
         password
       });

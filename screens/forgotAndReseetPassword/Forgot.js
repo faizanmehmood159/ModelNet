@@ -34,7 +34,7 @@ const Forgot = ({ navigation }) => {
       }
 
       const response = await axios.post(
-        "http://192.168.1.3:8000/api/v1/auth/sendOtp",
+        "http://192.168.38.237:8000/api/v1/auth/sendOtp",
         { email }
       );
 
