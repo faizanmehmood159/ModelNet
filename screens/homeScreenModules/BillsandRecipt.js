@@ -1,49 +1,67 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, View, ScrollView, Dimensions, Button } from 'react-native';
-import { fetchBill } from '../../api/packages';
+import { StyleSheet, Text, View, ScrollView, Dimensions, Button, ActivityIndicator } from 'react-native';
+
 
 const BillsandRecipt = () => {
-
+  const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
-    getBill();
+    getBills();
   }, []);
-  const getBill = async () => {
+
+  const getBills = async () => {
     try {
-      const userdata = await AsyncStorage.getItem("userData");
-      const dataUser = JSON.parse(userdata);
-      const token = dataUser.token
-      const data = {
-        userId: dataUser.id,
+      setLoading(true);
+      const userData = await AsyncStorage.getItem("userData");
+      const { token, id } = JSON.parse(userData);
+      console.log(token,id);
+      const response = await fetch(`http://192.168.100.5:8000/api/v1/auth/allBills`, {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      const data = await response.json();
+      if (response.ok) {
+        setBills(data.paidBills);
+      } else {
+        setError(data.message || 'Failed to fetch bills');
       }
-      const response = await fetchBill(data, token);
-      console.log(response)
     } catch (error) {
-      console.log(error);
+      setError(error.message || 'An error occurred while fetching bills');
+    } finally {
+      setLoading(false);
     }
   };
 
-
- 
-
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.receipt}>
-        <Text style={styles.heading}>Receipt</Text>
-        <Text>Date: May 10, 2024</Text>
-        <Text>Time: 10:00 AM</Text>
-        <Text>--------------------------------</Text>
-        <Text>Item 1 ........ $10</Text>
-        <Text>Item 2 ........ $20</Text>
-        <Text>Item 3 ........ $15</Text>
-        <Text>--------------------------------</Text>
-        <Text>Total: $45</Text>
-        <Button title="press me" onPress={getBill} />
-      </View>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : error ? (
+        <Text>Error: {error}</Text>
+      ) : (
+        <>
+          {bills && bills.length > 0 ? (
+            bills.map((bill, index) => (
+              <View key={index} style={styles.receipt}>
+                <Text style={styles.heading}>Receipt</Text>
+                <Text>Date: {bill.date}</Text>
+              </View>
+            ))
+          ) : (
+            <Text>No bills found</Text>
+          )}
+        </>
+      )}
+      <Button title="Refresh" onPress={getBills} />
     </ScrollView>
   );
 }
+
 
 export default BillsandRecipt;
 
@@ -66,6 +84,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 }, 
     shadowOpacity: 0.25,
     shadowRadius: 3.84, 
+    marginBottom: 20,
   },
   heading: {
     fontSize: 20,
