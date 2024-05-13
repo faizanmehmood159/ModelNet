@@ -6,71 +6,85 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-
 const Profile = ({ navigation }) => {
-  const { signOut } = useContext(AuthContext);
+  const { signOut, userToken } = useContext(AuthContext);
   const [profileImage, setProfileImage] = useState(null);
-  const [token, setToken] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [userId, setUserId] = useState(null); // State variable for userId
 
-  const getToken = async () => {
+  useEffect(() => {
+    getProfileImage(); // Fetch profile image on component mount
+  }, []);
+
+  const getProfileImage = async () => {
+    // Fetch profile image from AsyncStorage or your database
     try {
-      const token = await AsyncStorage.getItem("userToken");
-      const data = await AsyncStorage.getItem("userData");
-
-      const userData = JSON.parse(data);
-      setUserData(userData);
-      setToken(token);
-      setUserId(userData.id); 
+      const imageUri = await AsyncStorage.getItem('profileImage');
+      if (imageUri) {
+        setProfileImage(imageUri);
+      }
     } catch (error) {
-      console.error("Error retrieving token and user ID:", error);
+      console.error("Error fetching profile image: ", error);
     }
   };
 
-  useEffect(() => {  
-    getToken();
-  }, []);
+  const handleChoosePhoto = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [4, 3],
+      quality: 1,
+    });
 
-  const handleImageUpload = async () => {
-    try {
-      const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (!permissionResult.granted) {
-        Alert.alert("Permission Denied", "Please allow access to the camera roll to upload an image.");
-        return;
-      }
-
-      const pickerResult = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [1, 1],
-        quality: 1,
-      });
-
-      if (!pickerResult.canceled) {
-        const formData = new FormData();
-        formData.append('profileImage', { 
-          uri: pickerResult.uri,
-          name: `profile_image_${Date.now()}.jpg`,
-          type: 'image/jpeg',
-        });
-
-        console.log("Image data:", formData); // Log the image data before sending
-        
-        const response = await axios.post(`http://192.168.1.3:8000/api/v1/auth/upload/?userId=${userId}`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-            Authorization: `Bearer ${token}`, 
-          },
-        });
-        
-        // Set the uploaded image URL to display
-        setProfileImage(response.data.image.imageUrl);
-      }
-    } catch (error) {
-      console.error("Error uploading image:", error);
-      Alert.alert("Upload Failed", "An error occurred while uploading the image.");
+    if (!result.canceled) {
+      setProfileImage(result.uri);
+      saveProfileImage(result.uri);
     }
+  };
+
+  const saveProfileImage = async (imageUri) => {
+    // Convert image to base64 string
+    let base64Image = await convertImageToBase64(imageUri);
+  
+    // Send base64Image to your backend server and store it in the database
+    try {
+      // Example: Sending base64Image to your backend API
+      console.log('Sending image data:', base64Image);
+      const formData = new FormData();
+      formData.append('profileImage', base64Image);
+      
+      const response = await axios.post('http://192.168.1.3:8000/api/v1/auth/upload', formData, {
+        headers: {
+          Authorization: `Bearer ${userToken}`,
+          'Content-Type': 'multipart/form-data'
+        },
+      });
+  
+      console.log("Image uploaded successfully:", response.data);
+  
+      // Store the image URI locally for future use
+      await AsyncStorage.setItem('profileImage', imageUri);
+    } catch (error) {
+      console.error("Error uploading image: ", error);
+    }
+  };
+  
+  
+
+  const convertImageToBase64 = async (imageUri) => {
+    const response = await fetch(imageUri);
+    const blob = await response.blob();
+    const base64String = await blobToBase64(blob);
+    return base64String;
+  };
+
+  const blobToBase64 = (blob) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        resolve(reader.result.split(',')[1]);
+      };
+      reader.readAsDataURL(blob);
+    });
   };
 
   const handleSignOut = () => {
@@ -86,16 +100,20 @@ const Profile = ({ navigation }) => {
         <View style={styles.container}>
           <View style={styles.imageContainer}>
             {profileImage ? (
-              <Image source={{ uri: profileImage }} style={styles.profileImage} />
+              <TouchableOpacity onPress={handleChoosePhoto}>
+                <Image source={{ uri: profileImage }} style={styles.profileImage} />
+              </TouchableOpacity>
             ) : (
-              <View style={styles.profileBackground}>
-                <Text style={styles.uploadText}>Upload Profile Image</Text>
-              </View>
+              <TouchableOpacity onPress={handleChoosePhoto} style={styles.profileBackground}>
+                <Text style={styles.uploadText}>Upload Profile Picture</Text>
+              </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.uploadButton} onPress={handleImageUpload}>
-              <Text style={styles.uploadButtonText}>Upload Image</Text>
-            </TouchableOpacity>
           </View>
+          <TouchableOpacity onPress={handleChoosePhoto} style={styles.uploadButton}>
+            <Text style={styles.uploadButtonText}>Choose Photo</Text>
+          </TouchableOpacity>
+          
+          {/* Other profile options */}
           <View style={styles.textContainer}>
             <TouchableOpacity onPress={() => navigation.navigate("ChangeName")}>
               <Text style={styles.text}>Change Name</Text>
