@@ -39,7 +39,7 @@ const ChangeName = () => {
     const token = await AsyncStorage.getItem("userToken");
     try {
       const response = await axios.patch(
-        'http://192.168.1.8:8000/api/v1/auth/changeName',
+        'http://192.168.1.3:8000/api/v1/auth/changeName',
         { newName, newPhoneNo },
         {
           headers: {
