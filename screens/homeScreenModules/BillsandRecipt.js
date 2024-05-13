@@ -9,15 +9,19 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   SafeAreaView,
+  Alert,
+  Linking,
 } from "react-native";
-import { fetchBill } from "../../api/packages";
+import { bill, buyPackage, fetchBill } from "../../api/packages";
 
 const BillsAndReceipt = () => {
   const [bills, setBills] = useState([]);
+  const [billTopPay, setBillToPay] = useState(null);
+  console.log(billTopPay, "billTopPay");
   const [receipts, setReceipts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [selectedTab, setSelectedTab] = useState("bills"); // 'bills' or 'receipts'
+  const [selectedTab, setSelectedTab] = useState("bills");
 
   useEffect(() => {
     fetchData(selectedTab);
@@ -32,6 +36,9 @@ const BillsAndReceipt = () => {
       if (response.data.success === true) {
         if (tab === "bills") {
           setBills(response.data.data.paidBills);
+          const billabc = await bill(id, token);
+          console.log(billabc.data.data.bill.packages);
+          setBillToPay(billabc.data.data.bill.packages);
         } else {
           setReceipts(response.data.data.paidReceipts);
         }
@@ -42,6 +49,85 @@ const BillsAndReceipt = () => {
       setLoading(false);
     }
   };
+  function parsePackage(packageString) {
+    const packageObject = {};
+    packageString = packageString.replace(/^{+|}+$/g, "");
+    const pairs = packageString.split(",\n");
+    pairs.forEach((pair) => {
+      const [key, value] = pair.split(":").map((part) => part.trim());
+      const cleanKey = key.replace(/'/g, "");
+      const cleanValue = value.replace(/'/g, "");
+      packageObject[cleanKey] = cleanValue;
+    });
+    return packageObject;
+  }
+
+
+  const [token, setToken] = React.useState(null);
+  const [userData, setUserData] = React.useState(null);
+
+  const getToken = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const data = await AsyncStorage.getItem("userData");
+      const userData = JSON.parse(data);
+      setUserData(userData);
+      setToken(token);
+    } catch (error) {}
+  };
+  useEffect(() => {  
+    getToken();
+  }, []);
+
+
+  const handlePayPress = async (url) => {
+    // Linking.openURL(url);
+    if (billTopPay.price === 1700) {
+      try {
+        const body = {
+          userId: userData.id,
+          someStringData: "paid",
+        };
+        const response = await buyPackage(body, token);
+        if (response.data.success === true) {
+          Alert.alert("Open to pay Bill.", "Thank You.", [{ text: "." }]);
+          Linking.openURL("https://buy.stripe.com/test_5kA28F3A51cp7PqbIJ");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (billTopPay.price === 2200) {
+      try {
+        const body = {
+          userId: userData.id,
+          someStringData: "paid",
+        };
+        const response = await buyPackage(body, token);
+        if (response.data.success === true) {
+          Alert.alert("Open to pay Bill.", "Thank You.", [{ text: "." }]);
+          Linking.openURL("https://buy.stripe.com/test_dR67sZ7Qlf3ffhS7su");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    } else if (billTopPay.price === 2500) {
+      try {
+        const body = {
+          userId: userData.id,
+          someStringData: "paid",
+        };
+        const response = await buyPackage(body, token);
+        if (response.data.success === true) {
+          Alert.alert("Open to pay Bill.", "Thank You.", [{ text: "." }]);
+          Linking.openURL("https://buy.stripe.com/test_eVa28F8UpbR34De3cf");
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
+
+
 
   return (
     <SafeAreaView style={styles.safearea}>
@@ -65,7 +151,6 @@ const BillsAndReceipt = () => {
           <Text style={styles.tabButtonText}>Receipts</Text>
         </TouchableOpacity>
       </View>
-
       <ScrollView contentContainerStyle={styles.container}>
         {loading ? (
           <ActivityIndicator size="large" color="#0000ff" />
@@ -75,6 +160,25 @@ const BillsAndReceipt = () => {
           <>
             {selectedTab === "bills" && (
               <>
+                <View style={styles.billToPayContainer}>
+                  <Text style={styles.billToPayText}>Bill to Pay</Text>
+                  {billTopPay && (
+                    <View>
+                      <View style={styles.billToPayInner}>
+                      <Text style={styles.packageLeft}>
+                        Package: {billTopPay.label}
+                      </Text>
+                      <Text style={styles.packageRight}>
+                        Price: {billTopPay.price}
+                      </Text>
+                      </View>
+                      <TouchableOpacity style={styles.billToPayButton} onPress={handlePayPress}>
+                        <Text>Tap here to pay</Text>
+                      </TouchableOpacity>
+                    </View>
+                  )}
+                </View>
+
                 {bills && bills.length > 0 ? (
                   bills.map(
                     (bill, index) =>
@@ -97,8 +201,12 @@ const BillsAndReceipt = () => {
                             </Text>
                           </View>
                           <View style={styles.packages}>
-                            <Text style={styles.packageLeft}>Package: {bill.packages.label}</Text>
-                            <Text style={styles.packageRight}>Price: {bill.packages.price}</Text>
+                            <Text style={styles.packageLeft}>
+                              Package: {parsePackage(bill.packages[0]).label}
+                            </Text>
+                            <Text style={styles.packageRight}>
+                              Price: {parsePackage(bill.packages[0]).price}
+                            </Text>
                           </View>
                         </View>
                       )
@@ -110,17 +218,38 @@ const BillsAndReceipt = () => {
             )}
             {selectedTab === "receipts" && (
               <>
-                {receipts && receipts.length > 0 ? (
-                  receipts.map((receipt, index) => (
-                    <View key={index} style={styles.receipt}>
-                      <Text style={styles.packageLeft}>Receipt</Text>
-                      <Text style={styles.packageRight}>
-                        Date: {receipt.date}
-                      </Text>
-                    </View>
-                  ))
+                {bills && bills.length > 0 ? (
+                  bills.map(
+                    (bill, index) =>
+                      bill.status === "approved" && (
+                        <View key={index} style={styles.approvedReceipt}>
+                          <View style={styles.status}>
+                            <Text style={styles.approvedStatusText}>paid</Text>
+                          </View>
+                          <View>
+                            <Text style={styles.heading}>
+                              Bill # {bill._id}
+                            </Text>
+                          </View>
+                          <View style={styles.date}>
+                            <Text style={styles.dateLeft}>Date and Time</Text>
+                            <Text style={styles.dateRight}>
+                              {new Date(bill.createdAt).toLocaleString()}
+                            </Text>
+                          </View>
+                          <View style={styles.packages}>
+                            <Text style={styles.packageLeft}>
+                              Package: {parsePackage(bill.packages[0]).label}
+                            </Text>
+                            <Text style={styles.packageRight}>
+                              Price: {parsePackage(bill.packages[0]).price}{" "}
+                            </Text>
+                          </View>
+                        </View>
+                      )
+                  )
                 ) : (
-                  <Text>No receipts found</Text>
+                  <Text>No reciepts found</Text>
                 )}
               </>
             )}
@@ -139,14 +268,53 @@ const styles = StyleSheet.create({
   safearea: {
     flex: 1,
     backgroundColor: "#f5f5f5",
-    padding: 20,
+    paddingHorizontal: 10,
     paddingTop: 80,
   },
   container: {
     flexGrow: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingVertical: 20,
   },
+  billToPayContainer: {
+    alignItems: "center",
+    width: windowWidth - 20,
+    marginTop: 10,
+    marginBottom: 20,
+    backgroundColor: "#EDD6BE",
+    paddingVertical: 20,
+    borderRadius: 10,
+  },
+  billToPayInner: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingVertical: 10,
+  },
+  billToPayButton:{
+    backgroundColor: "#95DCB1",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 40,
+    elevation: 3,
+    shadowColor: "#000",
+    justifyContent: "center",
+    alignItems: "center",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+  },
+  billToPayText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 5,
+    color: "#FFF",
+  },
+
   date: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -198,9 +366,31 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 40,
   },
+
+  approvedStatusText: {
+    fontSize: 14,
+    color: "#fff",
+    backgroundColor: "#68C098",
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 40,
+  },
   receipt: {
     width: windowWidth - 40,
     backgroundColor: "#ffffff",
+    padding: 20,
+    borderRadius: 10,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    marginBottom: 20,
+  },
+
+  approvedReceipt: {
+    width: windowWidth - 40,
+    backgroundColor: "#AFD8AC",
     padding: 20,
     borderRadius: 10,
     elevation: 3,
