@@ -57,7 +57,7 @@ const Profile = ({ navigation }) => {
 
         console.log("Image data:", formData); // Log the image data before sending
         
-        const response = await axios.post(`http://192.168.100.5:8000/api/v1/auth/upload/?userId=${userId}`, formData, {
+        const response = await axios.post(`http://192.168.1.3:8000/api/v1/auth/upload/?userId=${userId}`, formData, {
           headers: {
             'Content-Type': 'multipart/form-data',
             Authorization: `Bearer ${token}`, 
