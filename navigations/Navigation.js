@@ -23,6 +23,7 @@ import AIChatbot from '../screens/homeScreenModules/AIChatbot';
 import CustomerSupport from '../screens/homeScreenModules/CustomerSupport';
 import { AuthContext } from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import Packages from '../screens/homeScreenModules/Packages';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -57,6 +58,7 @@ const Navigation = () => {
   const signOut = async () => {
     try {
       await AsyncStorage.removeItem('userToken');
+      await AsyncStorage.removeItem('userData');
       setUserToken(null);
     } catch (error) {
     }
@@ -116,11 +118,7 @@ const BottomTab = () => {
 
         tabBarStyle: {
           backgroundColor: 'white',
-          height: 60, 
-          
-          borderRadius: 20,
-          width:350,
-          marginLeft:15        
+          height: 60,     
         },
       }}
     >
@@ -133,6 +131,19 @@ const BottomTab = () => {
           tabBarIcon: ({ color }) => (
             <View >
               <Text style={{ ...styles.iconText, color }}>🏠</Text>
+            </View>
+          ),
+        }}
+      />
+      <Tab.Screen
+        name="Packages"
+        component={Packages}
+        options={{
+          headerShown: true,
+          tabBarLabel: 'Packages',
+          tabBarIcon: ({ color }) => (
+            <View>
+              <Text style={{ ...styles.iconText, color }}>🛒</Text>
             </View>
           ),
         }}

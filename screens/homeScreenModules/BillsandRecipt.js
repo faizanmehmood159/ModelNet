@@ -1,97 +1,94 @@
-import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
-import stripe from '@stripe/stripe-react-native';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Text, View, ScrollView, Dimensions, Button, ActivityIndicator } from 'react-native';
 
-const BillsandReceipt = () => {
-  const [amount, setAmount] = useState('');
-  const [description, setDescription] = useState('');
-  const [cardNumber, setCardNumber] = useState('');
-  const [expMonth, setExpMonth] = useState('');
-  const [expYear, setExpYear] = useState('');
-  const [cvc, setCvc] = useState('');
 
-  const handlePayment = async () => {
-    const token = await AsyncStorage.getItem("userToken");
+const BillsandRecipt = () => {
+  const [bills, setBills] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    getBills();
+  }, []);
+
+  const getBills = async () => {
     try {
-      const { tokenId } = await stripe.createToken({
-        card: {
-          number: cardNumber,
-          expMonth: parseInt(expMonth),
-          expYear: parseInt(expYear),
-          cvc,
-        },
-      });
-      
-      const response = await fetch('http://192.168.1.9/api/v1/auth/payment', {
-        method: 'POST',
+      setLoading(true);
+      const userData = await AsyncStorage.getItem("userData");
+      const { token, id } = JSON.parse(userData);
+      console.log(token,id);
+      const response = await fetch(`http://192.168.1.3:8000/api/v1/auth/allBills`, {
+        method: 'GET',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          amount: parseInt(amount) * 100, // Stripe requires amount in cents
-          description: description,
-          token: tokenId,
-        }),
       });
-  
       const data = await response.json();
-      console.log(data);
-      // Handle success or failure based on the response from the backend
+      if (response.ok) {
+        setBills(data.paidBills);
+      } else {
+        setError(data.message || 'Failed to fetch bills');
+      }
     } catch (error) {
-      console.error(error);
+      setError(error.message || 'An error occurred while fetching bills');
+    } finally {
+      setLoading(false);
     }
   };
-  
-  return (
-    <View style= {styles.container}>
-      <Text>Amount:</Text>
-      <TextInput value={amount} onChangeText={setAmount} />
-      <Text>Description:</Text>
-      <TextInput value={description} onChangeText={setDescription} />
-      <Text>Card Number:</Text>
-      <TextInput value={cardNumber} onChangeText={setCardNumber} />
-      <Text>Expiration Month:</Text>
-      <TextInput value={expMonth} onChangeText={setExpMonth} />
-      <Text>Expiration Year:</Text>
-      <TextInput value={expYear} onChangeText={setExpYear} />
-      <Text>CVC:</Text>
-      <TextInput value={cvc} onChangeText={setCvc} />
-      <Button title="Pay" onPress={handlePayment} />
-    </View>
-  );
-};
 
-export default BillsandReceipt;
+  return (
+    <ScrollView contentContainerStyle={styles.container}>
+      {loading ? (
+        <ActivityIndicator size="large" color="#0000ff" />
+      ) : error ? (
+        <Text>Error: {error}</Text>
+      ) : (
+        <>
+          {bills && bills.length > 0 ? (
+            bills.map((bill, index) => (
+              <View key={index} style={styles.receipt}>
+                <Text style={styles.heading}>Receipt</Text>
+                <Text>Date: {bill.date}</Text>
+              </View>
+            ))
+          ) : (
+            <Text>No bills found</Text>
+          )}
+        </>
+      )}
+      <Button title="Refresh" onPress={getBills} />
+    </ScrollView>
+  );
+}
+
+
+export default BillsandRecipt;
+
+const windowWidth = Dimensions.get('window').width;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
+    flexGrow: 1,
     justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 20,
   },
-  input: {
-    height: 40,
-    margin: 12,
-    borderWidth: 1,
-    padding: 10,
+  receipt: {
+    width: windowWidth - 40, 
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 10,
+    elevation: 3, 
+    shadowColor: '#000', 
+    shadowOffset: { width: 0, height: 2 }, 
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84, 
+    marginBottom: 20,
   },
-  button: {
-    alignItems: "center",
-    backgroundColor: "#DDDDDD",
-    padding: 10,
-  },
-  text: {
+  heading: {
     fontSize: 20,
-    fontWeight: "bold",
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
-  text1: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "red",
-  },
-  
-
-})
+});
