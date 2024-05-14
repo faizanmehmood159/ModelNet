@@ -51,7 +51,7 @@ const Profile = ({ navigation }) => {
       const formData = new FormData();
       formData.append('profileImage', base64Image);
       
-      const response = await axios.post('http://192.168.1.3:8000/api/v1/auth/upload', formData, {
+      const response = await axios.post('http://192.168.1.12:8000/api/v1/auth/upload', formData, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           'Content-Type': 'multipart/form-data'
