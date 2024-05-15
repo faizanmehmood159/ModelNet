@@ -15,7 +15,6 @@ const Profile = ({ navigation }) => {
   }, []);
 
   const getProfileImage = async () => {
-    // Fetch profile image from AsyncStorage or your database
     try {
       const imageUri = await AsyncStorage.getItem('profileImage');
       if (imageUri) {
@@ -34,24 +33,20 @@ const Profile = ({ navigation }) => {
       quality: 1,
     });
 
-    if (!result.canceled) {
+    if (!result.cancelled) {
       setProfileImage(result.uri);
       saveProfileImage(result.uri);
     }
   };
 
   const saveProfileImage = async (imageUri) => {
-    // Convert image to base64 string
     let base64Image = await convertImageToBase64(imageUri);
   
-    // Send base64Image to your backend server and store it in the database
     try {
-      // Example: Sending base64Image to your backend API
-      console.log('Sending image data:', base64Image);
       const formData = new FormData();
       formData.append('profileImage', base64Image);
       
-      const response = await axios.post('http://192.168.1.12:8000/api/v1/auth/upload', formData, {
+      const response = await axios.post('http://192.168.1.5:8000/api/v1/auth/upload', formData, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           'Content-Type': 'multipart/form-data'
@@ -60,14 +55,11 @@ const Profile = ({ navigation }) => {
   
       console.log("Image uploaded successfully:", response.data);
   
-      // Store the image URI locally for future use
       await AsyncStorage.setItem('profileImage', imageUri);
     } catch (error) {
       console.error("Error uploading image: ", error);
     }
   };
-  
-  
 
   const convertImageToBase64 = async (imageUri) => {
     const response = await fetch(imageUri);

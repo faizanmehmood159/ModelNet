@@ -13,13 +13,13 @@ const Home = ({ navigation, route }) => {
   
   useEffect(() => {
     fetchUserName();
-    fetchUserId();
+    // fetchUserId();
   }, []);
 
   const fetchUserName = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.1.12:8000/api/v1/auth/getLoggedInUserName', {
+      const response = await axios.get('http://192.168.1.5:8000/api/v1/auth/getLoggedInUserName', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -38,44 +38,44 @@ const Home = ({ navigation, route }) => {
 
 
 
-  const fetchUserId = async () => {
-    try {
-      const userId = await AsyncStorage.getItem('userId'); // Get user ID from AsyncStorage
-      setUserId(userId); // Set the user ID in the component's state
-    } catch (error) {
-      console.error('Error fetching user ID:', error);
-    }
-  };
+  // const fetchUserId = async () => {
+  //   try {
+  //     const userId = await AsyncStorage.getItem('userId'); // Get user ID from AsyncStorage
+  //     setUserId(userId); // Set the user ID in the component's state
+  //   } catch (error) {
+  //     console.error('Error fetching user ID:', error);
+  //   }
+  // };
 
-  const fetchUserData = async () => {
-    try {
-      if (!userId) {
-        console.error('User ID not found');
-        return;
-      }
-      const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.1.12:8000/api/v1/auth/getImage', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          userId: userId, // Pass the user ID as a query parameter
-        },
-      });
+  // const fetchUserData = async () => {
+  //   try {
+  //     if (!userId) {
+  //       console.error('User ID not found');
+  //       return;
+  //     }
+  //     const token = await AsyncStorage.getItem('userToken');
+  //     const response = await axios.get('http://192.168.1.5:8000/api/v1/auth/getImage', {
+  //       headers: {
+  //         Authorization: `Bearer ${token}`,
+  //       },
+  //       params: {
+  //         userId: userId, // Pass the user ID as a query parameter
+  //       },
+  //     });
 
-      if (response.data.success) {
-        setProfileImage(response.data.imageUrl); // Set the profile image URL
-      } else {
-        console.error('Failed to fetch user data:', response.data.errorMessage);
-      }
-    } catch (error) {
-      console.error('Error fetching user data:', error);
-    }
-  };
+  //     if (response.data.success) {
+  //       setProfileImage(response.data.imageUrl); // Set the profile image URL
+  //     } else {
+  //       console.error('Failed to fetch user data:', response.data.errorMessage);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching user data:', error);
+  //   }
+  // };
 
-  useEffect(() => {
-    fetchUserData();
-  }, [userId]);
+  // useEffect(() => {
+  //   fetchUserData();
+  // }, [userId]);
 
   
   const data = [

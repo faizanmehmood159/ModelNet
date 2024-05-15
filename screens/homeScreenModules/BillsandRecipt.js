@@ -81,7 +81,6 @@ const BillsAndReceipt = () => {
 
 
   const handlePayPress = async (url) => {
-    // Linking.openURL(url);
     if (billTopPay.price === 1700) {
       try {
         const body = {

@@ -24,7 +24,7 @@ const ResetPassword = ({ navigation }) => {
         return;
       }
   
-      const response = await fetch('http://192.168.1.12:8000/api/v1/auth/forgetPassword', {
+      const response = await fetch('http://192.168.1.5:8000/api/v1/auth/forgetPassword', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
