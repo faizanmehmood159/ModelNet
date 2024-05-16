@@ -11,7 +11,7 @@ const Profile = ({ navigation }) => {
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
-    getProfileImage(); // Fetch profile image on component mount
+    getProfileImage(); 
   }, []);
 
   const getProfileImage = async () => {
@@ -46,7 +46,7 @@ const Profile = ({ navigation }) => {
       const formData = new FormData();
       formData.append('profileImage', base64Image);
       
-      const response = await axios.post('http://192.168.1.5:8000/api/v1/auth/upload', formData, {
+      const response = await axios.post('http://192.168.100.8:8000/api/v1/auth/upload', formData, {
         headers: {
           Authorization: `Bearer ${userToken}`,
           'Content-Type': 'multipart/form-data'
@@ -91,7 +91,7 @@ const Profile = ({ navigation }) => {
       <SafeAreaView style={styles.safeAreaView}>
         <View style={styles.container}>
           <View style={styles.imageContainer}>
-            {profileImage ? (
+            {/* {profileImage ? (
               <TouchableOpacity onPress={handleChoosePhoto}>
                 <Image source={{ uri: profileImage }} style={styles.profileImage} />
               </TouchableOpacity>
@@ -99,7 +99,14 @@ const Profile = ({ navigation }) => {
               <TouchableOpacity onPress={handleChoosePhoto} style={styles.profileBackground}>
                 <Text style={styles.uploadText}>Upload Profile Picture</Text>
               </TouchableOpacity>
-            )}
+            )} */}
+            <View style={styles.profile}>
+      {profileImage ? (
+        <Image source={{ uri: profileImage }} style={styles.profileImage} />
+      ) : (
+        <Image source={require('../../assets/profile.png')} style={styles.profileImage} />
+      )}
+    </View>
           </View>
           <TouchableOpacity onPress={handleChoosePhoto} style={styles.uploadButton}>
             <Text style={styles.uploadButtonText}>Choose Photo</Text>

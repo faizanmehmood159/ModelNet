@@ -138,7 +138,8 @@ const BottomTab = () => {
         name="Setting"
         component={Profile}
         options={{
-          headerShown: true,
+          
+          headerTransparent: true,
           tabBarLabel: 'Profile',
           tabBarIcon: ({ color }) => (
             <View>
