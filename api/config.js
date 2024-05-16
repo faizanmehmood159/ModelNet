@@ -1,1 +1,1 @@
-const API_URL = "http://192.168.38.237:8000/api/v1/auth/";
+const API_URL = "http://192.168.100.8:8000/api/v1/auth/";
