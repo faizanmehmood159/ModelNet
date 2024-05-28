@@ -9,21 +9,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const Home = ({ navigation, route }) => {
   // const [profileImage, setProfileImage] = useState(null);
   const [userName, setUserName] = useState('');
-  const [userId, setUserId] = useState(null);
   
   useEffect(() => {
     fetchUserName();
-    fetchUserId();
+    fetchProfileImage();
   }, []);
 
   const fetchUserName = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
+<<<<<<< HEAD
       const response = await axios.get('http://192.168.38.237:8000/api/v1/auth/getLoggedInUserName', {
-        headers: {
-          Authorization: `Bearer ${token}`,
+=======
+      const response = await axios.get('http://192.168.1.4:8000/api/v1/auth/getLoggedInUserName', {
         },
-      });
 
       if (response.data.success) {
         setUserName(response.data.data.name); // Set the user's name
@@ -35,6 +34,7 @@ const Home = ({ navigation, route }) => {
     }
   };
 
+<<<<<<< HEAD
   const profileImage = userName ? userName.charAt(0).toUpperCase() : ''; // Get the first letter of the user's name
 
 
@@ -95,6 +95,29 @@ const Home = ({ navigation, route }) => {
   // useEffect(() => {
   //   fetchUserData();
   // }, [userId]);
+=======
+  const fetchProfileImage = async () => {
+    try {
+      const token = await AsyncStorage.getItem('userToken');
+      const response = await axios.get('http://192.168.1.4:8000/api/v1/auth/getProfileImage', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.data.success) {
+        setProfileImage(`data:image/jpeg;base64,${response.data.data.profileImage}`);
+      } else {
+        console.error('Failed to fetch profile image:', response.data.errorMessage);
+      }
+    } catch (error) {
+      console.error('Error fetching profile image:', error);
+    }
+  };
+
+
+
+>>>>>>> faizan
 
   
   const data = [
@@ -115,11 +138,23 @@ const Home = ({ navigation, route }) => {
         <ScrollView style={styles.scrollView}>
           <View style={styles.grid1}>
             <View style={styles.profiletab}> 
+<<<<<<< HEAD
             <TouchableOpacity onPress ={()=> navigation.navigate(Profile)} >
                 <View style={styles.profile}>
                   <Text style={styles.profileText}>{profileImage}</Text>
                 </View>
               </TouchableOpacity>
+=======
+              <TouchableOpacity onPress ={()=> navigation.navigate(Profile)} >
+    <View style={styles.profile}>
+    {profileImage ? (
+                    <Image source={{ uri: profileImage }} style={styles.profileImage} />
+                  ) : (
+                    <Image source={require('../assets/profile.png')} style={styles.profileImage} />
+                  )}
+    </View>
+  </TouchableOpacity>
+>>>>>>> faizan
               <View style={styles.detail}>
                 <Text style={styles.detailtext1}>{userName}</Text>
               </View>

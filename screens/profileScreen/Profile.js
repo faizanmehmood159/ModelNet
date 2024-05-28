@@ -6,9 +6,14 @@ import * as ImagePicker from 'expo-image-picker';
 import axios from 'axios';
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
+
 const Profile = ({ navigation }) => {
 <<<<<<< HEAD
+<<<<<<< HEAD
   const { signOut, userToken } = useContext(AuthContext);
+=======
+  const { signOut } = useContext(AuthContext);
+>>>>>>> faizan
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
@@ -71,13 +76,19 @@ console.log(userData)
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
-      aspect: [4, 3],
+      aspect: [1, 1],
       quality: 1,
     });
+<<<<<<< HEAD
 
     if (!result.canceled) {
       setProfileImage(result.uri);
       saveProfileImage(result.uri);
+=======
+    if (!result.canceled) {
+      setProfileImage(result.assets[0].uri);
+      saveProfileImage(result.assets[0].uri);
+>>>>>>> faizan
     }
   };
 
@@ -87,15 +98,23 @@ console.log(userData)
   
     // Send base64Image to your backend server and store it in the database
     try {
+<<<<<<< HEAD
       // Example: Sending base64Image to your backend API
       console.log('Sending image data:', base64Image);
       const formData = new FormData();
       formData.append('profileImage', base64Image);
       
       const response = await axios.post('http://192.168.38.237:8000/api/v1/auth/upload', formData, {
+=======
+      const data = {
+        profileImage: base64Image,
+      }
+      const token = await AsyncStorage.getItem('userToken');
+      console.log("tgis is data", data)
+      const response = await axios.post('http://192.168.1.4:8000/api/v1/auth/uploadProfileImage', data, {
+>>>>>>> faizan
         headers: {
-          Authorization: `Bearer ${userToken}`,
-          'Content-Type': 'multipart/form-data'
+          Authorization: `Bearer ${token}`,
         },
       });
   
