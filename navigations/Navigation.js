@@ -10,7 +10,7 @@ import Forgot from '../screens/forgotAndReseetPassword/Forgot';
 import ResetPassword from '../screens/forgotAndReseetPassword/ResetPassword';
 import SpeedTest from '../screens/homeScreenModules/SpeedTest';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import RegisterComplaint from '../screens/homeScreenModules/RegisterComplain';
 import NewInstallation from '../screens/homeScreenModules/NewInstallation';
 import SettingScreen from '../screens/bottomTabScreens/SettingScreen';
@@ -23,11 +23,10 @@ import AIChatbot from '../screens/homeScreenModules/AIChatbot';
 import CustomerSupport from '../screens/homeScreenModules/CustomerSupport';
 import { AuthContext } from '../context/AuthContext';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-
-
 
 const Navigation = () => {
   const [userToken, setUserToken] = useState(null);
@@ -40,6 +39,7 @@ const Navigation = () => {
           setUserToken(token);
         }
       } catch (error) {
+        console.error(error);
       }
     };
 
@@ -51,6 +51,7 @@ const Navigation = () => {
       await AsyncStorage.setItem('userToken', token);
       setUserToken(token);
     } catch (error) {
+      console.error(error);
     }
   };
 
@@ -60,6 +61,7 @@ const Navigation = () => {
       await AsyncStorage.removeItem('userData');
       setUserToken(null);
     } catch (error) {
+      console.error(error);
     }
   };
 
@@ -69,99 +71,98 @@ const Navigation = () => {
     userToken,
   };
 
-
   return (
     <AuthContext.Provider value={authContext}>
-    <NavigationContainer>
-      <Stack.Navigator >
-      {userToken ? (
+      <NavigationContainer>
+        <Stack.Navigator>
+          {userToken ? (
             <>
-        <Stack.Screen name="Home" component={BottomTab} options={{ headerShown: false }} />
-        <Stack.Screen name="Profile" component={Profile} options={{headerTransparent: true}} />
-        <Stack.Screen name="ChangePassword" component={ChangePassword} options={{headerTransparent: true}} />
-        <Stack.Screen name="ChangeName" component={ChangeName} options={{headerTransparent: true}} />
-        <Stack.Screen name="FAQ" component={FAQ} options={{headerTransparent: true}} />
-        <Stack.Screen name="SpeedTest" component={SpeedTest}  options={{headerTransparent: true}}  />
-        <Stack.Screen name="AIChatbot" component={AIChatbot} options={{headerTransparent: true}} />
-        <Stack.Screen name="NewInstallation" component={NewInstallation} options={{headerTransparent: true}} />
-        <Stack.Screen name="RegisterComplaint" component={RegisterComplaint}  options={{headerTransparent: true}} />
-        <Stack.Screen name="CustomerSupport" component={CustomerSupport}  options={{headerShown: false}} />
-        <Stack.Screen name="BillsandReceipt" component={BillsandReceipt }  options={{headerTransparent: true}} />
-        <Stack.Screen name="Register" component={RegisterComplaint}  options={{headerTransparent: true}} />
-</> 
-) : (
-  <>
-        <Stack.Screen name="GetStart" component={GetStart} options={{ headerShown: false }} />
-        <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false }} />
-        <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
-        <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
-        <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
-        <Stack.Screen name="Forgot" component={Forgot} options={{ headerShown: false }} />
-</>
-)}
-      </Stack.Navigator>
-    </NavigationContainer>
+              <Stack.Screen name="Home" component={BottomTab} options={{ headerShown: false }} />
+              <Stack.Screen name="Profile" component={Profile} options={{ headerTransparent: true }} />
+              <Stack.Screen name="ChangePassword" component={ChangePassword} options={{ headerTransparent: true }} />
+              <Stack.Screen name="ChangeName" component={ChangeName} options={{ headerTransparent: true }} />
+              <Stack.Screen name="FAQ" component={FAQ} options={{ headerTransparent: true }} />
+              <Stack.Screen name="SpeedTest" component={SpeedTest} options={{ headerTransparent: true }} />
+              <Stack.Screen name="AIChatbot" component={AIChatbot} options={{ headerTransparent: true }} />
+              <Stack.Screen name="NewInstallation" component={NewInstallation} options={{ headerTransparent: true }} />
+              <Stack.Screen name="RegisterComplaint" component={RegisterComplaint} options={{ headerTransparent: true }} />
+              <Stack.Screen name="CustomerSupport" component={CustomerSupport} options={{ headerShown: false }} />
+              <Stack.Screen name="BillsandReceipt" component={BillsandReceipt} options={{ headerTransparent: true }} />
+              <Stack.Screen name="Register" component={RegisterComplaint} options={{ headerTransparent: true }} />
+            </>
+          ) : (
+            <>
+              <Stack.Screen name="GetStart" component={GetStart} options={{ headerShown: false }} />
+              <Stack.Screen name="ResetPassword" component={ResetPassword} options={{ headerShown: false }} />
+              <Stack.Screen name="Welcome" component={Welcome} options={{ headerShown: false }} />
+              <Stack.Screen name="Login" component={Login} options={{ headerShown: false }} />
+              <Stack.Screen name="Signup" component={Signup} options={{ headerShown: false }} />
+              <Stack.Screen name="Forgot" component={Forgot} options={{ headerShown: false }} />
+            </>
+          )}
+        </Stack.Navigator>
+      </NavigationContainer>
     </AuthContext.Provider>
   );
 };
 
-
-
 const BottomTab = () => {
   return (
     <Tab.Navigator
-      screenOptions={{
+      screenOptions={({ route }) => ({
         tabBarActiveTintColor: 'black',
         tabBarInactiveTintColor: 'grey',
-        
-
+        tabBarShowLabel: false,
         tabBarStyle: {
           backgroundColor: 'white',
-          height: 60,     
+          height: 60,
+          borderRadius: 100,
+          marginHorizontal:20,
+          marginBottom:-60,
+          bottom:100
         },
-      }}
+        tabBarIcon: ({ color }) => {
+          let iconName;
+
+          if (route.name === 'Home Screen') {
+            iconName = 'home';
+          } else if (route.name === 'Setting') {
+            iconName = 'account-settings';
+          }
+
+          // You can set the background color to red when the tab is active
+          const iconStyle = {
+            backgroundColor: route.name === 'Home Screen' || 'setting' ? color === 'black' ? '#2BC0E4' : 'white' : 'white',
+            borderRadius: 200,
+            padding: 4,
+          };
+
+          return (
+            <View style={[styles.tabIcon, iconStyle]}>
+              <MaterialCommunityIcons name={iconName} size={32} color={color} />
+            </View>
+          );
+        },
+      })}
     >
       <Tab.Screen
         name="Home Screen"
         component={Home}
-        options={{
-          headerShown: false,
-          tabBarLabel: 'Home',
-          tabBarIcon: ({ color }) => (
-            <View >
-              <Text style={{ ...styles.iconText, color }}>🏠</Text>
-            </View>
-          ),
-        }}
+        options={{ headerShown: false }}
       />
       <Tab.Screen
         name="Setting"
         component={Profile}
-        options={{
-          
-          headerTransparent: true,
-          tabBarLabel: 'Profile',
-          tabBarIcon: ({ color }) => (
-            <View>
-              <Text style={{ ...styles.iconText, color }}>⚙️</Text>
-            </View>
-          ),
-        }}
+        options={{ headerTransparent: true }}
       />
     </Tab.Navigator>
   );
 };
 
-
-
 const styles = StyleSheet.create({
   tabIcon: {
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  iconText: {
-    fontSize: 24,
-    flexDirection: 'row',
   },
 });
 
