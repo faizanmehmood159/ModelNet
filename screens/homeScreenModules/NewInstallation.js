@@ -34,7 +34,7 @@ const NewInstallation = () => {
   const handlePackageSelect = (pkgId) => {
     setSelectedId(pkgId);
     setSelectedPackage(packages.find((pkg) => pkg.id === pkgId));
-    console.log(selectedPackage);
+    // console.log(selectedPackage);
   };
 
   const handleInstallationFormSubmit = async () => {

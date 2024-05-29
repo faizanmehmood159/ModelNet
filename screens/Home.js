@@ -25,7 +25,7 @@ const Home = ({ navigation, route }) => {
       });
 
       if (response.data.success) {
-        setUserName(response.data.data.name); // Set the user's name
+        setUserName(response.data.data.name); 
       } else {
         console.error('Failed to fetch user name:', response.data.errorMessage);
       }
@@ -34,7 +34,6 @@ const Home = ({ navigation, route }) => {
     }
   };
 
-  
   const fetchProfileImage = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');

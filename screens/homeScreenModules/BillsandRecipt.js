@@ -17,7 +17,7 @@ import { bill, buyPackage, fetchBill } from "../../api/packages";
 const BillsAndReceipt = () => {
   const [bills, setBills] = useState([]);
   const [billTopPay, setBillToPay] = useState(null);
-  console.log(billTopPay, "billTopPay");
+  // console.log(billTopPay, "billTopPay");
   const [receipts, setReceipts] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -37,7 +37,7 @@ const BillsAndReceipt = () => {
         if (tab === "bills") {
           setBills(response.data.data.paidBills);
           const billabc = await bill(id, token);
-          console.log(billabc.data.data.bill.packages);
+          // console.log(billabc.data.data.bill.packages);
           setBillToPay(billabc.data.data.bill.packages);
         } else {
           setReceipts(response.data.data.paidReceipts);

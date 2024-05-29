@@ -57,16 +57,16 @@ const Login = ({ navigation }) => {
         email,
         password
       });
-      console.log(response.data)
+      // console.log(response.data)
       if(response.data.success === true){
-        console.log(response.data.message)
+        // console.log(response.data.message)
       }
 
       if (response.data.success === true) {
         const userData = response.data.data
         const stringifyData = JSON.stringify(userData);
         await AsyncStorage.setItem("userData",stringifyData);
-        console.log(response.data)
+        // console.log(response.data)
         signIn(response.data.data.token);
         showToast("Welcome.", ToastAndroid.SHORT);
       }
