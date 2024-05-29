@@ -19,7 +19,8 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png"
-      }
+      },
+      "package": "com.faizanmehmoodx.modelNet"
     },
     "web": {
       "favicon": "./assets/favicon.png"

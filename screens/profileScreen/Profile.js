@@ -48,7 +48,7 @@ const Profile = ({ navigation }) => {
       }
       const token = await AsyncStorage.getItem('userToken');
       console.log("tgis is data", data)
-      const response = await axios.post('http://192.168.1.4:8000/api/v1/auth/uploadProfileImage', data, {
+      const response = await axios.post('http://192.168.100.5:8000/api/v1/auth/uploadProfileImage', data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
