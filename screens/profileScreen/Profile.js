@@ -8,60 +8,14 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 
 const Profile = ({ navigation }) => {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  const { signOut, userToken } = useContext(AuthContext);
-=======
   const { signOut } = useContext(AuthContext);
->>>>>>> faizan
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
-    getProfileImage(); // Fetch profile image on component mount
+    getProfileImage(); 
   }, []);
 
   const getProfileImage = async () => {
-    // Fetch profile image from AsyncStorage or your database
-=======
-
-  const [userName, setUserName] = useState('');
-  
-  useEffect(() => {
-    fetchUserName();
-  }, []);
-
-  const fetchUserName = async () => {
-    try {
-      const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.1.3:8000/api/v1/auth/getLoggedInUserName', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (response.data.success) {
-        setUserName(response.data.data.name); // Set the user's name
-      } else {
-        console.error('Failed to fetch user name:', response.data.errorMessage);
-      }
-    } catch (error) {
-      console.error('Error fetching user name:', error);
-    }
-  };
-
-  const profileImage = userName ? userName.charAt(0).toUpperCase() : ''; // Get the first letter of the user's name
-
-
-
-
-  const { signOut } = useContext(AuthContext);
-  // const [profileImage, setProfileImage] = useState(null);
-  const [token, setToken] = useState(null);
-  const [userData, setUserData] = useState(null);
-  const [userId, setUserId] = useState(null); // State variable for userId
-console.log(userData)
-  const getToken = async () => {
->>>>>>> 8bad7dd317d799d62602f9695c481758418597c0
     try {
       const imageUri = await AsyncStorage.getItem('profileImage');
       if (imageUri) {
@@ -79,40 +33,22 @@ console.log(userData)
       aspect: [1, 1],
       quality: 1,
     });
-<<<<<<< HEAD
-
-    if (!result.canceled) {
-      setProfileImage(result.uri);
-      saveProfileImage(result.uri);
-=======
     if (!result.canceled) {
       setProfileImage(result.assets[0].uri);
       saveProfileImage(result.assets[0].uri);
->>>>>>> faizan
     }
   };
 
   const saveProfileImage = async (imageUri) => {
-    // Convert image to base64 string
     let base64Image = await convertImageToBase64(imageUri);
   
-    // Send base64Image to your backend server and store it in the database
     try {
-<<<<<<< HEAD
-      // Example: Sending base64Image to your backend API
-      console.log('Sending image data:', base64Image);
-      const formData = new FormData();
-      formData.append('profileImage', base64Image);
-      
-      const response = await axios.post('http://192.168.38.237:8000/api/v1/auth/upload', formData, {
-=======
       const data = {
         profileImage: base64Image,
       }
       const token = await AsyncStorage.getItem('userToken');
       console.log("tgis is data", data)
-      const response = await axios.post('http://192.168.1.4:8000/api/v1/auth/uploadProfileImage', data, {
->>>>>>> faizan
+      const response = await axios.post('http://192.168.100.5:8000/api/v1/auth/uploadProfileImage', data, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -120,14 +56,11 @@ console.log(userData)
   
       console.log("Image uploaded successfully:", response.data);
   
-      // Store the image URI locally for future use
       await AsyncStorage.setItem('profileImage', imageUri);
     } catch (error) {
       console.error("Error uploading image: ", error);
     }
   };
-  
-  
 
   const convertImageToBase64 = async (imageUri) => {
     const response = await fetch(imageUri);
@@ -159,8 +92,7 @@ console.log(userData)
       <SafeAreaView style={styles.safeAreaView}>
         <View style={styles.container}>
           <View style={styles.imageContainer}>
-<<<<<<< HEAD
-            {profileImage ? (
+            {/* {profileImage ? (
               <TouchableOpacity onPress={handleChoosePhoto}>
                 <Image source={{ uri: profileImage }} style={styles.profileImage} />
               </TouchableOpacity>
@@ -168,11 +100,14 @@ console.log(userData)
               <TouchableOpacity onPress={handleChoosePhoto} style={styles.profileBackground}>
                 <Text style={styles.uploadText}>Upload Profile Picture</Text>
               </TouchableOpacity>
-            )}
-=======
-                  <Text style={styles.profileText}>{profileImage}</Text>
-               
->>>>>>> 8bad7dd317d799d62602f9695c481758418597c0
+            )} */}
+            <View style={styles.profile}>
+      {profileImage ? (
+        <Image source={{ uri: profileImage }} style={styles.profileImage} />
+      ) : (
+        <Image source={require('../../assets/profile.png')} style={styles.profileImage} />
+      )}
+    </View>
           </View>
           <TouchableOpacity onPress={handleChoosePhoto} style={styles.uploadButton}>
             <Text style={styles.uploadButtonText}>Choose Photo</Text>
@@ -221,33 +156,22 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     alignItems: "center",
-    justifyContent: "center",
     marginTop: -80,
-    backgroundColor: "#00AED1",
-    height: 100,
-    width: 100,
-    borderRadius: 100,
   },
   profileBackground: {
     alignItems: "center", 
     justifyContent: "center",
-    width: 100,
-    height: 100,
+    width: 150,
+    height: 150,
     borderRadius: 100,
     borderWidth: 4,
     borderColor: 'white',
     overflow: "hidden",
   },
-  profileText: {
-    color: 'white',
-    fontSize: 40,
-    fontWeight: 'bold',
-  },
   profileImage: {
-    width: 48,
-    height: 48,
+    width: 150,
+    height: 150,
     borderRadius: 75,
-    borderWidth: 5,
   },
   uploadText: {
     fontSize: 18,

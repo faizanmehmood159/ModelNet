@@ -7,7 +7,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Home = ({ navigation, route }) => {
-  // const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState(null);
   const [userName, setUserName] = useState('');
   
   useEffect(() => {
@@ -18,11 +18,11 @@ const Home = ({ navigation, route }) => {
   const fetchUserName = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-<<<<<<< HEAD
-      const response = await axios.get('http://192.168.38.237:8000/api/v1/auth/getLoggedInUserName', {
-=======
-      const response = await axios.get('http://192.168.1.4:8000/api/v1/auth/getLoggedInUserName', {
+      const response = await axios.get('http://192.168.100.5:8000/api/v1/auth/getLoggedInUserName', {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
+      });
 
       if (response.data.success) {
         setUserName(response.data.data.name); // Set the user's name
@@ -34,72 +34,11 @@ const Home = ({ navigation, route }) => {
     }
   };
 
-<<<<<<< HEAD
-  const profileImage = userName ? userName.charAt(0).toUpperCase() : ''; // Get the first letter of the user's name
-
-
-
-  const fetchUserId = async () => {
-    try {
-      const userId = await AsyncStorage.getItem('userId'); // Get user ID from AsyncStorage
-      setUserId(userId); // Set the user ID in the component's state
-    } catch (error) {
-      console.error('Error fetching user ID:', error);
-    }
-  };
-
-<<<<<<< HEAD
-  const fetchUserData = async () => {
-    try {
-      if (!userId) {
-        console.error('User ID not found');
-        return;
-      }
-      const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.38.237:8000/api/v1/auth/getImage', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        params: {
-          userId: userId, // Pass the user ID as a query parameter
-        },
-      });
-=======
-  // const fetchUserData = async () => {
-  //   try {
-  //     if (!userId) {
-  //       console.error('User ID not found');
-  //       return;
-  //     }
-  //     const token = await AsyncStorage.getItem('userToken');
-  //     const response = await axios.get('http://192.168.1.3:8000/api/v1/auth/getImage', {
-  //       headers: {
-  //         Authorization: `Bearer ${token}`,
-  //       },
-  //       params: {
-  //         userId: userId, // Pass the user ID as a query parameter
-  //       },
-  //     });
->>>>>>> 8bad7dd317d799d62602f9695c481758418597c0
-
-  //     if (response.data.success) {
-  //       setProfileImage(response.data.imageUrl); // Set the profile image URL
-  //     } else {
-  //       console.error('Failed to fetch user data:', response.data.errorMessage);
-  //     }
-  //   } catch (error) {
-  //     console.error('Error fetching user data:', error);
-  //   }
-  // };
-
-  // useEffect(() => {
-  //   fetchUserData();
-  // }, [userId]);
-=======
+  
   const fetchProfileImage = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.1.4:8000/api/v1/auth/getProfileImage', {
+      const response = await axios.get('http://192.168.100.5:8000/api/v1/auth/getProfileImage', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -117,7 +56,6 @@ const Home = ({ navigation, route }) => {
 
 
 
->>>>>>> faizan
 
   
   const data = [
@@ -138,13 +76,6 @@ const Home = ({ navigation, route }) => {
         <ScrollView style={styles.scrollView}>
           <View style={styles.grid1}>
             <View style={styles.profiletab}> 
-<<<<<<< HEAD
-            <TouchableOpacity onPress ={()=> navigation.navigate(Profile)} >
-                <View style={styles.profile}>
-                  <Text style={styles.profileText}>{profileImage}</Text>
-                </View>
-              </TouchableOpacity>
-=======
               <TouchableOpacity onPress ={()=> navigation.navigate(Profile)} >
     <View style={styles.profile}>
     {profileImage ? (
@@ -154,7 +85,6 @@ const Home = ({ navigation, route }) => {
                   )}
     </View>
   </TouchableOpacity>
->>>>>>> faizan
               <View style={styles.detail}>
                 <Text style={styles.detailtext1}>{userName}</Text>
               </View>
@@ -271,7 +201,7 @@ const styles = StyleSheet.create({
   },
 
   profile: {
-    backgroundColor: '#00AED1',
+    backgroundColor: 'black',
     width: 50,
     height: 50,
     borderWidth: 1,
@@ -400,11 +330,6 @@ const styles = StyleSheet.create({
     shadowRadius: 10,
     elevation: 5,
   },
-  profileText: {
-    color: 'white',
-    fontSize: 24,
-    fontWeight: 'bold',
-  },
   profileImage: {
     width: 48,
     height: 48,
@@ -412,3 +337,5 @@ const styles = StyleSheet.create({
     borderWidth: 5,
   },
 });
+
+

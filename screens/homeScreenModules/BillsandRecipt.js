@@ -32,20 +32,6 @@ const BillsAndReceipt = () => {
       setLoading(true);
       const userData = await AsyncStorage.getItem("userData");
       const { token, id } = JSON.parse(userData);
-<<<<<<< HEAD
-      console.log(token,id);
-      const response = await fetch(`http://192.168.38.237:8000/api/v1/auth/allBills`, {
-        method: 'GET',
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      const data = await response.json();
-      if (response.ok) {
-        setBills(data.paidBills);
-      } else {
-        setError(data.message || 'Failed to fetch bills');
-=======
       const response = await fetchBill(token);
       if (response.data.success === true) {
         if (tab === "bills") {
@@ -56,7 +42,6 @@ const BillsAndReceipt = () => {
         } else {
           setReceipts(response.data.data.paidReceipts);
         }
->>>>>>> 8bad7dd317d799d62602f9695c481758418597c0
       }
     } catch (error) {
       setError(error.message || "An error occurred while fetching data");
