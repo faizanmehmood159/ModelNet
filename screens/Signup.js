@@ -30,7 +30,13 @@ const Signup = ({ navigation }) => {
 
   const [errmessage, setErrmessage] = useState(null);
   const [showPassword, setShowPassword] = useState(false);
-  const [selectedImage, setSelectedImage] = useState(null);
+
+  const validateNumber = (text) => {
+    // Regular expression to validate phone numbers starting with +92 and having 10 digits
+    const phoneRegex = /^\+92\d{10}$/;
+    return phoneRegex.test(text);
+  };
+
 
   const toggleShowPassword = () => {
     setShowPassword(!showPassword);
@@ -62,6 +68,11 @@ const Signup = ({ navigation }) => {
       setErrmessage("Please enter a valid email");
       return;
     }
+
+    if (!validateNumber(fdata.phone_no)) {
+      setErrmessage("Please enter a valid phone number (starting with +92 and 10 digits)");
+      return;
+    }
   
     if (userData.password.length < 8) {
       setErrmessage("Password must be at least 8 characters");
@@ -70,7 +81,7 @@ const Signup = ({ navigation }) => {
   
     try {
       showLoader();
-      const response = await axios.post("http://192.168.100.5:8000/api/v1/auth/signup", userData);
+      const response = await axios.post("http://192.168.140.237:8000/api/v1/auth/signup", userData);
       const data = response.data;
       
       if (data.error) {
@@ -118,6 +129,7 @@ const Signup = ({ navigation }) => {
             />
           </View>
           <View style={styles.page}>
+            
             <Title>Sign Up</Title>
             {errmessage ? (
               <Text style={styles.errormessage}>{errmessage}</Text>
@@ -142,7 +154,7 @@ const Signup = ({ navigation }) => {
               <TextInput
                 style={styles.input}
                 keyboardType="phone-pad"
-                placeholder="Phone Number"
+                placeholder="Phone Number (+92xxxxxxxxx)"
                 onChangeText={(text) => setFdata({ ...fdata, phone_no: text })}
               />
               <View style={styles.underline} />
