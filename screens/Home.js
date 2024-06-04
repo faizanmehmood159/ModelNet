@@ -18,7 +18,7 @@ const Home = ({ navigation, route }) => {
   const fetchUserName = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.100.5:8000/api/v1/auth/getLoggedInUserName', {
+      const response = await axios.get('http://192.168.140.237:8000/api/v1/auth/getLoggedInUserName', {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -37,7 +37,7 @@ const Home = ({ navigation, route }) => {
   const fetchProfileImage = async () => {
     try {
       const token = await AsyncStorage.getItem('userToken');
-      const response = await axios.get('http://192.168.100.5:8000/api/v1/auth/getProfileImage', {
+      const response = await axios.get('http://192.168.140.237:8000/api/v1/auth/getProfileImage', {
         headers: {
           Authorization: `Bearer ${token}`,
         },

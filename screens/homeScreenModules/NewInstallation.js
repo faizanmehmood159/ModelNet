@@ -61,7 +61,7 @@ const NewInstallation = () => {
       console.log(data)
 
       const response = await axios.post(
-        "http://192.168.100.5:8000/api/v1/auth/installationForm",
+        "http://192.168.140.237:8000/api/v1/auth/installationForm",
         data,
         {
           headers: {
